@@ -1,0 +1,5 @@
+.idea
+*.pyc
+trac.db.zip
+trac.db
+settings.py
