@@ -1,0 +1,82 @@
+{% if page and page.paginator.num_pages and page.paginator.num_pages > 1 %}
+{% load djtrac_tags %}
+
+    <div class='col-xs-5 col-md-4 form-inline'>
+         На странице
+        <div class="btn-group">
+            <button class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">{{ page.paginator.per_page }}<span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="{% addurlparameter per_page 20 %}">20</a></li>
+                <li><a href="{% addurlparameter per_page 50 %}">50</a></li>
+                <li><a href="{% addurlparameter per_page 100 %}">100</a></li>
+                <li><a href="{% addurlparameter per_page 300 %}">300</a></li>
+                <li><a href="{% addurlparameter per_page all %}">Все</a></li>
+            </ul>
+        </div>
+        из {{ page.paginator.count }}
+    </div>
+    <div class='col-xs-6 form-inline'>
+        <div class='container'>
+        <ul class="pagination pagination-sm container " style='margin:0px'>
+            {% if page.has_previous %}
+                <li>
+                    <a href="{% if request|get_params %}
+                        {{ request|get_params }}&page=1
+                    {% else %}
+                        ?page=1
+                    {% endif %}">1</a>
+                </li>
+                {% if page.previous_page_number != 1 %}
+                    {% if page.previous_page_number|add:"-1" != 1 %}
+                        <li>
+                            <a>...</a>
+                         </li>
+                    {% endif %}
+                    <li>
+                        <a href="{% if request|get_params %}
+                            {{ request|get_params }}&page={{ page.previous_page_number }}
+                        {% else %}
+                            ?page={{ page.previous_page_number }}
+                        {% endif %}">{{ page.previous_page_number }}</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+
+
+            <li class="active">
+                <a href="{% if request|get_params %}
+                    {{ request|get_params }}&page={{ page.number }}
+                {% else %}
+                    ?page={{ page.number }}
+                {% endif %}">{{ page.number }}</a>
+            </li>
+
+
+            {% if page.has_next %}
+                {% if page.next_page_number != page.paginator.num_pages %}
+                    <li>
+                        <a href="{% if request|get_params %}
+                            {{ request|get_params }}&page={{ page.next_page_number }}
+                        {% else %}
+                            ?page={{ page.next_page_number }}
+                        {% endif %}">{{ page.next_page_number }}</a>
+                    </li>
+                    <li>
+                        <a>...</a>
+                     </li>
+                {% endif %}
+
+                <li>
+                    <a href="{% if request|get_params %}
+                        {{ request|get_params }}&page={{ page.paginator.num_pages }}
+                    {% else %}
+                        ?page={{ page.paginator.num_pages }}
+                    {% endif %}">{{ page.paginator.num_pages }}</a>
+                </li>
+            {% endif %}
+        </ul>
+        </div>
+    </div>
+    </div>
+{% endif %}

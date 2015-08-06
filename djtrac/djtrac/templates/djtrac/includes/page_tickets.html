@@ -1,0 +1,43 @@
+{% load djtrac_tags %}
+{#<h1>{{ component }}</h1>#}
+<div class="bs-table">
+      <table class="table table-condensed table-bordered" >
+
+          {% if page and page.paginator.num_pages and page.paginator.num_pages > 1 %}
+            <caption>{% include "djtrac/includes/b3_paginator.html" %}</caption>
+          {% endif %}
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{{ sort_params.id.icon|safe }}<a href="{{ sort_params.id.url }}">№</a></th>
+              <th>{{ sort_params.summary.icon|safe }}<a href="{{ sort_params.summary.url }}">Название</a></th>
+{#              <th>Type</th>#}
+              <th>{{ sort_params.time.icon|safe }}<a href="{{ sort_params.time.url }}">Открытие тикета</a></th>
+              <th>{{ sort_params.changetime.icon|safe }}<a href="{{ sort_params.changetime.url }}" >Последнее изменение</a></th>
+              <th>{{ sort_params.priority.icon|safe }}<a href="{{ sort_params.priority.url }}" >Приоритет</a></th>
+              <th>{{ sort_params.owner.icon|safe }}<a href="{{ sort_params.owner.url }}">Исполнитель</a></th>
+              <th>{{ sort_params.milestone.icon|safe }}<a href="{{ sort_params.milestone.url }}">Этап</a></th>
+              <th>{{ sort_params.status.icon|safe }}<a href="{{ sort_params.status.url }}">Состояние</a></th>
+              <th>{{ sort_params.keywords.icon|safe }}<a href="{{ sort_params.keywords.url }}">Ключевые слова</a></th>
+            </tr>
+          </thead>
+          <tbody>
+
+            {% for ticket in page.object_list %}
+                <tr class={% if ticket.status == 'closed' %}success{% elif ticket.status == 'assigned' %}warning{% elif ticket.status == 'new'%}danger{% endif %}>
+                    <td>{{ forloop.counter|add:page.start_index|add:"-1" }}</td>
+                    <td><a href={% url 'ticket' ticket.id %}>{{ ticket.id}}</a></td>
+                    <td>{{ ticket.summary }}</td>
+{#                    <td>{{ ticket.type }}</td>#}
+                    <td>{{ ticket.time|to_datetime }}</td>
+                    <td>{{ ticket.changetime|to_datetime }}</td>
+                    <td>{{ ticket.priority }}</td>
+                    <td>{{ ticket.owner }}</td>
+                    <td>{{ ticket.milestone }}</td>
+                    <td>{{ ticket.status }}</td>
+                    <td>{{ ticket.keywords }}</td>
+                </tr>
+            {% endfor %}
+          </tbody>
+      </table>
+      </div>

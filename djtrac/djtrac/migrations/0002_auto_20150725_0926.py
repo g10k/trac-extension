@@ -2,9 +2,12 @@
 from __future__ import unicode_literals
 import sys
 
+
 from django.db import models, migrations
 
 def copy_components(apps, schema_editor):
+    if sys.argv[1] == 'test':
+        return
     Component = apps.get_model('djtrac', 'Component')
     ComponentInMysql = apps.get_model('djtrac', 'ComponentInMysql')
     print 'something'
@@ -20,6 +23,9 @@ def copy_components(apps, schema_editor):
         else:
             message = u'Already has... \033[94mOk\n'
         sys.stdout.write(message)
+
+
+
 
 
 class Migration(migrations.Migration):

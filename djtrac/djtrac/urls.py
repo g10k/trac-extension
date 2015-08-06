@@ -14,10 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url
-from django.contrib import admin
+from django.contrib import admin, auth
+from django.contrib.auth.views import login, logout
 from djtrac import views
+from djtrac.forms import CustomAuthenticationForm
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^login/$', login, {'template_name': 'djtrac/login.html','authentication_form': CustomAuthenticationForm}, name='custom_login'),
+    url(r'^logout/$', logout, {'next_page': '/'}),
+    url(r'^ac/keywords/', views.keywords),
     url(r'^$', views.main),
+    url(r'^tickets/(?P<pk>[0-9]+)/$', views.TicketDetail.as_view(), name='ticket'),
 ]

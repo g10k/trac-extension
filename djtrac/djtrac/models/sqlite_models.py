@@ -194,6 +194,12 @@ class System(models.Model):
         db_table = 'system'
 
 
+class TicketsManager(models.Manager):
+    def get_allowed(self, user):
+        components = list(user.allowed_components.values_list('component__name', flat=True))
+        return self.filter(component__in=components)
+
+
 class Ticket(models.Model):
     id = models.IntegerField(primary_key=True, blank=True)  # AutoField?
     type = models.TextField(blank=True, null=True)
@@ -213,6 +219,7 @@ class Ticket(models.Model):
     summary = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     keywords = models.TextField(blank=True, null=True)
+    objects = TicketsManager()
 
     def __unicode__(self):
         return "%s" % self.summary

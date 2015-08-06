@@ -1,0 +1,19 @@
+{% extends "djtrac/base.html" %}
+
+{% block body %}
+    <h1>Залогиньтесь</h1>
+    <div class="well">
+    <form method="post" class="form-horizontal" action="{% url 'django.contrib.auth.views.login' %}">
+        {% csrf_token %}
+        {% include "djtrac/form_templates/field.html" with field=form.username  %}
+        {% include "djtrac/form_templates/field.html" with field=form.password  %}
+         <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <input type="submit" value="Зайти" class="btn btn-default btn-success" />
+                <input type="hidden" name="next" value="{{ next }}" />
+            </div>
+         </div>
+    </form>
+    </div>
+
+{% endblock %}
