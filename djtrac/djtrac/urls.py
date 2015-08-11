@@ -25,5 +25,4 @@ urlpatterns = [
     url(r'^logout/$', logout, {'next_page': '/'}),
     url(r'^ac/keywords/', views.keywords),
     url(r'^$', views.main),
-    url(r'^tickets/(?P<pk>[0-9]+)/$', views.TicketDetail.as_view(), name='ticket'),
 ]

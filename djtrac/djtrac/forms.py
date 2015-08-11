@@ -3,7 +3,9 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import ugettext, ugettext_lazy as _
 
-from djtrac.models import Milestone, ComponentInMysql, Ticket
+
+from djtrac.models import Milestone, Ticket
+from djtrac.datatools import components_for_user,milestones_for_user
 EMPTY_CHOICE = ('', '-----')
 
 
@@ -20,7 +22,7 @@ class AutoComplete(forms.TextInput):
 class ReportForm(forms.Form):
     component = forms.ChoiceField(
         label=u"Направление",
-        choices=[EMPTY_CHOICE] + list(ComponentInMysql.objects.values_list('name', 'name')),
+        choices=list(Ticket.objects.values_list('component', 'component').distinct()),
         widget=forms.Select(attrs={'class': 'form-control'}),
         required=False
     )
@@ -74,8 +76,8 @@ class ReportForm(forms.Form):
         if user == None:
             pass
         else:
-            self.fields['component'].choices = [EMPTY_CHOICE] + \
-                list(user.allowed_components.values_list('component__name', 'component__name'))
+            self.fields['component'].choices = list([EMPTY_CHOICE]) + [(component_name, component_name) for component_name in components_for_user(user)]
+            self.fields['milestone'].choices = list([EMPTY_CHOICE]) + [(milestone_name, milestone_name) for milestone_name in milestones_for_user(user)]
 
 
 class TicketForm(forms.ModelForm):

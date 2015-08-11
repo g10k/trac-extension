@@ -2,8 +2,9 @@
 from collections import OrderedDict
 from django.shortcuts import render
 from django.views import generic
+from django.conf import settings
 
-from djtrac.models import Milestone, Ticket, TicketChangeInMysql, TicketChange
+from djtrac.models import Milestone, Ticket
 from djtrac.forms import ReportForm, TicketForm
 from djtrac.utils import timestamp_from_date
 from djtrac.datatools.reports import prepare_sort_params, get_page
@@ -16,6 +17,7 @@ def main(request):
     tickets = []
     group_by_components = None
     group_by_milestone = None
+    show_description = None
     result = {}
     if form.is_valid():
         milestone = form.cleaned_data.get('milestone')
@@ -34,7 +36,7 @@ def main(request):
         if milestone:
             tickets = Ticket.objects.filter(milestone=milestone)
         if component:
-            tickets = Ticket.objects.filter(component=component)
+            tickets = tickets.filter(component=component)
         if keyword:
             tickets = tickets.filter(keywords__icontains=keyword)
         if dt_from:
@@ -46,15 +48,11 @@ def main(request):
         sort_key = request.GET.get('sort', '-time')
         tickets = tickets.order_by(sort_key)
 
-
         # Логика группировок
-
         if group_by_components and group_by_milestone:
             result = OrderedDict()
-
             components = set(tickets.values_list('component', flat=True).distinct()) - set((''))
             milestones = set(tickets.values_list('milestone', flat=True).distinct()) - set((''))
-            print milestones
             for component in components:
                 result[component] = OrderedDict()
                 for milestone in milestones:
@@ -62,17 +60,19 @@ def main(request):
                     if tickets.filter(component=component, milestone=milestone).exists():
                         result[component][milestone] = get_page(request, tickets.filter(component=component, milestone=milestone), 20)
 
-            import pprint
-            pprint.pprint(result)
-
         elif group_by_components:
             result = OrderedDict()
             components = list(tickets.values_list('component', flat=True).distinct())
             for component in components:
                 result[component] = get_page(request, tickets.filter(component=component), 20)
 
+        elif group_by_milestone:
+            result = OrderedDict()
+            milestones = list(tickets.values_list('milestone', flat=True).distinct())
+            for milestone in milestones:
+                result[milestone] = get_page(request, tickets.filter(milestone=milestone), 20)
 
-
+        print tickets
     else:
         pass
     c = {
@@ -86,20 +86,9 @@ def main(request):
         'page': get_page(request, tickets, 100),
         'group_by_components': group_by_components,
         'group_by_milestone': group_by_milestone,
-        'tickets_by_components': result
+        'grouped_tickets': result,
+        'show_description': show_description,
+        'HTTP_PATH_TO_TRAC': settings.HTTP_PATH_TO_TRAC
     }
 
     return render(request, 'djtrac/index.html', c)
-
-
-class TicketDetail(generic.DetailView):
-    model = Ticket
-    # form = TicketForm
-    template_name = 'djtrac/ticket_detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(TicketDetail, self).get_context_data(**kwargs)
-        context['changes'] = TicketChangeInMysql.objects.filter(ticket=context['object'].id)
-        context['form'] = TicketForm(instance=context['object'])
-        # context['object2'] = TicketChange.objects.get(pk=context['object'].id)
-        return context

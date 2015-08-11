@@ -1,6 +1,9 @@
 {% load djtrac_tags %}
-{#<h1>{{ component }}</h1>#}
-<div class="bs-table">
+{% if collapse %}
+    <div class="panel-collapse collapse" id="milestone_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" >
+{% endif %}
+
+<div class="bs-table" >
       <table class="table table-condensed table-bordered" >
 
           {% if page and page.paginator.num_pages and page.paginator.num_pages > 1 %}
@@ -11,7 +14,6 @@
               <th>#</th>
               <th>{{ sort_params.id.icon|safe }}<a href="{{ sort_params.id.url }}">№</a></th>
               <th>{{ sort_params.summary.icon|safe }}<a href="{{ sort_params.summary.url }}">Название</a></th>
-{#              <th>Type</th>#}
               <th>{{ sort_params.time.icon|safe }}<a href="{{ sort_params.time.url }}">Открытие тикета</a></th>
               <th>{{ sort_params.changetime.icon|safe }}<a href="{{ sort_params.changetime.url }}" >Последнее изменение</a></th>
               <th>{{ sort_params.priority.icon|safe }}<a href="{{ sort_params.priority.url }}" >Приоритет</a></th>
@@ -26,9 +28,8 @@
             {% for ticket in page.object_list %}
                 <tr class={% if ticket.status == 'closed' %}success{% elif ticket.status == 'assigned' %}warning{% elif ticket.status == 'new'%}danger{% endif %}>
                     <td>{{ forloop.counter|add:page.start_index|add:"-1" }}</td>
-                    <td><a href={% url 'ticket' ticket.id %}>{{ ticket.id}}</a></td>
+                    <td><a href="{{ HTTP_PATH_TO_TRAC }}{{ ticket.id }}">{{ ticket.id}}</a></td>
                     <td>{{ ticket.summary }}</td>
-{#                    <td>{{ ticket.type }}</td>#}
                     <td>{{ ticket.time|to_datetime }}</td>
                     <td>{{ ticket.changetime|to_datetime }}</td>
                     <td>{{ ticket.priority }}</td>
@@ -37,7 +38,16 @@
                     <td>{{ ticket.status }}</td>
                     <td>{{ ticket.keywords }}</td>
                 </tr>
+                {% if show_description %}
+                    <tr>
+                    <td colspan="2"></td>
+                    <td colspan="8">{{ ticket.description }}</td>
+                    </tr>
+                {% endif %}
             {% endfor %}
           </tbody>
       </table>
       </div>
+{% if collapse %}
+    </div>
+{% endif %}

@@ -196,7 +196,10 @@ class System(models.Model):
 
 class TicketsManager(models.Manager):
     def get_allowed(self, user):
-        components = list(user.allowed_components.values_list('component__name', flat=True))
+        projects = user.allowed_projects.all()
+        components = set()
+        for project in projects:
+            components.update(project.allowed_components.values_list('component_name', flat=True))
         return self.filter(component__in=components)
 
 

@@ -39,31 +39,41 @@
           </div>
         </form>
 
-      {% if group_by_components and group_by_milestone %}
-            {% for component, milestones in tickets_by_components.iteritems %}
-                <div class="bs-callout bs-callout-info">
-                    <h3 class="well">Направление: {{ component }}</h3>
-                </div>
-                {% for mitestone, page in milestones.iteritems %}
-                    <h4>Этап: {{ mitestone|default:"не указан" }}</h4>
-                    {% include 'djtrac/includes/page_tickets.html' %}
+          {% if group_by_components and group_by_milestone %}
+                {% for component, milestones in grouped_tickets.iteritems %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Направление: {{ component }}</div>
+                    </div>
+                    <ul class="list-group">
+
+                    {% for mitestone, page in milestones.iteritems %}
+                        <li class="list-group-item" >
+                            <a data-toggle='collapse' href="#milestone_{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+                                Этап: {{ mitestone|default:"не указан" }}</a>
+                            {{ page.paginator.object_list|length }} тикетов
+                        </li>
+                        {% include 'djtrac/includes/page_tickets.html' with collapse=True %}
+                    {% endfor %}
+                    </ul>
                 {% endfor %}
-            {% endfor %}
 
-
-      {% elif group_by_components %}
-          {% for component, page in tickets_by_components.iteritems %}
-              {% include 'djtrac/includes/page_tickets.html' %}
-          {% endfor %}
-      {% else %}
-          {% if page.object_list|length %}
+          {% elif group_by_components or group_by_milestone %}
+              {% for component_or_milestone, page in grouped_tickets.iteritems %}
+                  <li class="list-group-item" >
+                    <a data-toggle='collapse' href="#milestone_{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+                        {{ component_or_milestone|default:"не указан" }}</a>
+                    {{ page.paginator.object_list|length }} тикетов
+                  </li>
+                  {% include 'djtrac/includes/page_tickets.html' with collapse=True %}
+              {% endfor %}
+          {% elif page.object_list|length%}
             {% include 'djtrac/includes/page_tickets.html' %}
+          {% endif %}
 
-          {% else %}
+          {% if not tickets|length %}
               <div class="well">Ничего не найдено</div>
           {% endif %}
 
-      {% endif %}
 
 
 
