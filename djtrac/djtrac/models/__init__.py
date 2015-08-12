@@ -1,5 +1,3 @@
 # -*- encoding: utf-8 -*-
-from sqlite_models import Attachment, AuthCookie, Cache, Component, DjangoMigrations, Enum, Milestone, NodeChange,\
-    Permission, Report, Repository, Revision, Session, SessionAttribute, System, Ticket, TicketChange, TicketCustom,\
-    Version, Wiki
-from mysql_models import Project, ProjectComponent,ProjectMilestone
+from trac_models import Ticket
+from extra_models import Project, ProjectComponent, ProjectMilestone

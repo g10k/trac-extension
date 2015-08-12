@@ -53,8 +53,6 @@ from trac.wiki.formatter import HtmlFormatter, LinkFormatter
 from trac.web.href import Href
 
 from django.utils.safestring import mark_safe
-from django import template
-# register = template.Library()
 
 env = EnvironmentStub(enable=['trac.*', 'tracopt.ticket.commit_updater.*'])
 req = Mock(href=Href('/'), abs_href=Href('http://www.example.com/'),
@@ -62,5 +60,5 @@ req = Mock(href=Href('/'), abs_href=Href('http://www.example.com/'),
 context = Context.from_request(req, 'wiki')
 
 @register.filter
-def tracwiki(s):
+def tracwiki(s): # Пока использую для работы, т.к. выдает неопознанную ошибку в некоторых случаях
     return mark_safe(HtmlFormatter(env, context, s).generate())

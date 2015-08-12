@@ -5,9 +5,6 @@ from django.utils.safestring import mark_safe
 from django.utils.http import urlquote
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models.query import RawQuerySet
-# from djtrac.models import Ticket
-# from django.conf import settings
-
 
 
 def get_page(request, qs, objects_count=20):

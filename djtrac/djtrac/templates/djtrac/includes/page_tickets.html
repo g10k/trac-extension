@@ -1,11 +1,11 @@
 {% load djtrac_tags %}
-{% if collapse %}
+
+{% if group_by_components or group_by_milestone %}
     <div class="panel-collapse collapse" id="milestone_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" >
 {% endif %}
 
 <div class="bs-table" >
       <table class="table table-condensed table-bordered" >
-
           {% if page and page.paginator.num_pages and page.paginator.num_pages > 1 %}
             <caption>{% include "djtrac/includes/b3_paginator.html" %}</caption>
           {% endif %}
@@ -48,6 +48,6 @@
           </tbody>
       </table>
       </div>
-{% if collapse %}
+{% if group_by_components or group_by_milestone%}
     </div>
 {% endif %}
