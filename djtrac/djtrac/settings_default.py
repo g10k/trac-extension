@@ -84,7 +84,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'djtrac.wsgi.application'
 
+DATABASES = {
+    'default': {
+        'ENGINE':'django.db.backends.mysql',
+        'NAME': 'djtrac',
+        'USER': 'djtrac',
+        'PASSWORD': 'djtrac_pass',
+        'HOST': '127.0.0.1',
+        # 'PORT': '5432',
 
+    },
+    'trac_db': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'djtrac/trac.db'),
+         'TEST': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'djtrac/test_trac.db'),
+        }
+    },
+
+}
 
 DATABASE_ROUTERS = ['djtrac.db_router.AuthRouter',]
 
