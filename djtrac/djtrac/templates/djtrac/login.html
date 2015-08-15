@@ -6,6 +6,11 @@
     <form method="post" class="form-horizontal" action="{% url 'django.contrib.auth.views.login' %}">
         {% csrf_token %}
         <div class="col-sm-6">
+            {% if form.non_field_errors %}
+                {% for error, value in form.errors.items %}
+                    <p class='help text-danger'><small>{{ value|join:"" }}</small></p>
+                {% endfor %}
+            {% endif %}
         {% include "djtrac/form_templates/field.html" with field=form.username  %}
         {% include "djtrac/form_templates/field.html" with field=form.password  %}
             </div>

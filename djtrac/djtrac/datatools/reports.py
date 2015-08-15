@@ -17,14 +17,10 @@ def get_page(request, qs, objects_count=20):
 
     per_page = request.GET.get('per_page', objects_count)
     if per_page == 'all':
-        from mongoengine.base.datastructures import BaseList
-        objects_count = qs.count() if not isinstance(qs, (BaseList, list)) else len(qs)
+        objects_count = len(qs)
     else:
         objects_count = int(per_page)
     paginator = Paginator(qs, objects_count)              # Количество объектов на странице
-    if type(qs) is RawQuerySet:
-        paginator._count = len(set(qs))
-
     page = request.GET.get('page', 1)                  # Если не передали GET -- показываем page=1
 
     try:

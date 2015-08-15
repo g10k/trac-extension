@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import ugettext_lazy as _
 
 
-from djtrac.datatools import components_for_user,milestones_for_user
+from djtrac.datatools.users import components_for_user, milestones_for_user
 from djtrac.models import ProjectMilestone
 EMPTY_CHOICE = ('', '-----')
 

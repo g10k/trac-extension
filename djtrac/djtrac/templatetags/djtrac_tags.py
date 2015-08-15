@@ -46,19 +46,3 @@ register.tag('addurlparameter', addurlparameter)
 @register.filter
 def get_params(request):
     return url_params(request, as_is=True, use_urllib=True, except_params="page")
-
-from trac.test import EnvironmentStub, Mock, MockPerm
-from trac.mimeview import Context
-from trac.wiki.formatter import HtmlFormatter, LinkFormatter
-from trac.web.href import Href
-
-from django.utils.safestring import mark_safe
-
-env = EnvironmentStub(enable=['trac.*', 'tracopt.ticket.commit_updater.*'])
-req = Mock(href=Href('/'), abs_href=Href('http://www.example.com/'),
-           authname='anonymous', perm=MockPerm(), args={})
-context = Context.from_request(req, 'wiki')
-
-@register.filter
-def tracwiki(s): # Пока использую для работы, т.к. выдает неопознанную ошибку в некоторых случаях
-    return mark_safe(HtmlFormatter(env, context, s).generate())
