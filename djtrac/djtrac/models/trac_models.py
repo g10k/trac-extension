@@ -50,19 +50,19 @@ from django.db import models
 #         managed = False
 #         db_table = 'cache'
 #
-#
-# class Component(models.Model):
-#     name = models.TextField(blank=True, primary_key=True)
-#     owner = models.TextField(blank=True, null=True)
-#     description = models.TextField(blank=True, null=True)
-#
-#     class Meta:
-#         managed = False
-#         db_table = 'component'
-#
-#     def __unicode__(self):
-#         return u"%s, %s" % (self.name, self.owner)
-#
+
+class Component(models.Model):
+    name = models.TextField(blank=True, primary_key=True)
+    owner = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'component'
+
+    def __unicode__(self):
+        return u"%s, %s" % (self.name, self.owner)
+
 #
 #
 # class DjangoMigrations(models.Model):
@@ -87,19 +87,19 @@ from django.db import models
 #         unique_together = (('type', 'name'),)
 #
 #
-# class Milestone(models.Model):
-#     name = models.TextField(primary_key=True, blank=True)
-#     due = models.IntegerField(blank=True, null=True)
-#     completed = models.IntegerField(blank=True, null=True)
-#     description = models.TextField(blank=True, null=True)
-#
-#     class Meta:
-#         managed = False
-#         db_table = 'milestone'
-#
-#     def __unicode__(self):
-#         return "%s due: %s; completed: %s " % (self.name,self.due, self.completed)
-#
+class Milestone(models.Model):
+    name = models.TextField(primary_key=True, blank=True)
+    due = models.IntegerField(blank=True, null=True)
+    completed = models.IntegerField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'milestone'
+
+    def __unicode__(self):
+        return "%s due: %s; completed: %s " % (self.name, self.due, self.completed)
+
 #
 # class NodeChange(models.Model):
 #     repos = models.IntegerField(blank=True, null=True)
