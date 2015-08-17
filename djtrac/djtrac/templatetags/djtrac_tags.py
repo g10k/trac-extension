@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 import datetime
 from django import template
-from django.template import Library, Node, resolve_variable, TemplateSyntaxError
+from django.template import Node, resolve_variable, TemplateSyntaxError
 from djtrac.datatools.reports import url_params
 register = template.Library()
 
@@ -26,13 +26,12 @@ class AddParameter(Node):
     req = resolve_variable('request', context)
     params = req.GET.copy()
     try:
-        # Нужно понять, можно ли использовать второй аргумент, как переменную контекста, из которой взять значение
         value = resolve_variable(self.value, context)
     except Exception:
-        # Значит используем как значение
         value = self.value
     params[self.varname] = value
     return '%s?%s' % (req.path, params.urlencode())
+
 
 def addurlparameter(parser, token):
   from re import split
@@ -40,8 +39,8 @@ def addurlparameter(parser, token):
   if len(bits) < 2:
     raise TemplateSyntaxError, "'%s' tag requires two arguments" % bits[0]
   return AddParameter(bits[1],bits[2])
-
 register.tag('addurlparameter', addurlparameter)
+
 
 @register.filter
 def get_params(request):

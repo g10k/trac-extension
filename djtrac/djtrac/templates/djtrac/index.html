@@ -3,9 +3,14 @@
 {% load staticfiles %}
 {% load djtrac_tags %}
 
+
 {% block extra_head %}
-     <script type="text/javascript" src="{% static 'js/custom/index.js' %}"></script>
-    {{ form.media }}
+
+
+
+	<!-- For testing importing it again, but with another tag and light=1 -->
+{#	{% import_django_select2_js_css light=1 %}#}
+{#    {{ form.media }}#}
 {% endblock %}
 
 {% block body %}
@@ -18,6 +23,7 @@
             {% include "djtrac/form_templates/field.html" with field=form.number %}
           </div>
           <div class="col-sm-6">
+{#            {% include "djtrac/form_templates/field.html" with field=form.keyword %}#}
             {% include "djtrac/form_templates/field.html" with field=form.keyword %}
             {% include "djtrac/form_templates/field.html" with field=form.dt_from %}
             {% include "djtrac/form_templates/field.html" with field=form.dt_to %}

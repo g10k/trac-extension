@@ -11,7 +11,4 @@ $(function () {
          format:'d.m.Y',
          lang:'ru'
     });
-    $("#id_keyword").autocomplete({
-        source: '/ac/keywords/'
-    });
 });

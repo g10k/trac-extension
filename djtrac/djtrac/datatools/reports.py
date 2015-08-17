@@ -4,7 +4,6 @@ import urllib
 from django.utils.safestring import mark_safe
 from django.utils.http import urlquote
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models.query import RawQuerySet
 
 
 def get_page(request, qs, objects_count=20):

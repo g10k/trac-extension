@@ -23,6 +23,7 @@ def main(request):
         component = form.cleaned_data.get('component')
         number = form.cleaned_data.get('number')
         keyword = form.cleaned_data.get('keyword')
+        print "keyword", keyword
         dt_from = form.cleaned_data.get('dt_from')
         dt_to = form.cleaned_data.get('dt_to')
         group_by_components = form.cleaned_data.get('group_by_components')

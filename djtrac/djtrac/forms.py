@@ -5,8 +5,34 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from djtrac.datatools.users import components_for_user, milestones_for_user
-from djtrac.models import ProjectMilestone
+from djtrac.models import ProjectMilestone, Ticket
+from django_select2.widgets import AutoHeavySelect2Widget
+from django_select2.fields import AutoSelect2Field
+from django_select2 import NO_ERR_RESP
 EMPTY_CHOICE = ('', '-----')
+
+
+class SelfChoices(AutoSelect2Field):
+
+    def get_val_txt(self, value):
+        if not hasattr(self, 'res_map'):
+            self.res_map = {}
+        return self.res_map.get(value, None)
+
+    def get_results(self, request, term, page, context):
+        if not hasattr(self, 'res_map'):
+            self.res_map = {}
+        keyword = term
+        keywords_db = list(Ticket.objects.filter(keywords__icontains=keyword).values_list('keywords', flat=True).distinct())
+        # Некоторые keywords из БД нужно распарсить:  'blog, django'
+        result_keywords = []
+        for kw in keywords_db:
+            result_keywords += kw.split(',')
+
+        res = [(word, word)for i, word in enumerate(result_keywords, start=1)]
+        self.choices = res
+        self.res_map = dict(res)
+        return NO_ERR_RESP, False, res
 
 
 class DatePicker(forms.TextInput):
@@ -15,22 +41,16 @@ class DatePicker(forms.TextInput):
         js = ('datetimepicker-master/jquery.datetimepicker.js',)
 
 
-class AutoComplete(forms.TextInput):
-    class Media:
-        css = {'all':('css/jquery-ui.min.css',)}
-        js = ('js/jquery-ui.min.js',)
-
-
 class ReportForm(forms.Form):
     component = forms.ChoiceField(
         label=u"Направление",
-        choices=[], # переопределяется в __init__ методе
+        choices=[],  # переопределяется в __init__ методе
         widget=forms.Select(attrs={'class': 'form-control'}),
         required=False,
     )
     milestone = forms.ChoiceField(
         label=u"Этап",
-        choices=[], # переопределяется в __init__ методе
+        choices=[],  # переопределяется в __init__ методе
         widget=forms.Select(attrs={'class': 'form-control'}),
         required=False
     )
@@ -40,12 +60,18 @@ class ReportForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         help_text=u"Если указан номер, то остальные фильтры не действуют"
     )
-    keyword = forms.CharField(
+    keyword = SelfChoices(
         label=u"Ключевое слово",
         required=False,
-        widget=AutoComplete(attrs={'class': 'form-control'}),
-
+        widget=AutoHeavySelect2Widget(
+            select2_options={
+                'width': '100%',
+                'minimumInputLength': 0,
+                'placeholder': u"Ключевое слово"
+            }
+        )
     )
+
     dt_from = forms.DateField(
         label=u"Время работы. С",
         required=False,
@@ -77,7 +103,6 @@ class ReportForm(forms.Form):
             self.fields['milestone'].choices = list([EMPTY_CHOICE]) + [(milestone_name, milestone_name) for milestone_name in milestones_for_user(user)]
         current_milestone = ProjectMilestone.objects.filter(is_current=True).first()
         self.fields['milestone'].initial = current_milestone.milestone_name if current_milestone else False
-
 
 
 class CustomAuthenticationForm(AuthenticationForm):
