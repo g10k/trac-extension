@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
 from django.contrib.auth.models import User
 from django.db import models
-from trac_models import Ticket
-COMPONENT_CHOICES = (Ticket.objects.values_list('component', 'component').distinct())
-MILESTONE_CHOICES = (Ticket.objects.values_list('milestone', 'milestone').distinct())
+import trac_models
+COMPONENT_CHOICES = (trac_models.Component.objects.values_list('name', 'name').distinct())
+MILESTONE_CHOICES = (trac_models.Milestone.objects.values_list('name', 'name').distinct())
 
 
 class Project(models.Model):
