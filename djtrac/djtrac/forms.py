@@ -42,17 +42,17 @@ class DatePicker(forms.TextInput):
 
 
 class ReportForm(forms.Form):
-    component = forms.ChoiceField(
-        label=u"Направление",
-        choices=[],  # переопределяется в __init__ методе
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        required=False,
-    )
     milestone = forms.ChoiceField(
         label=u"Этап",
         choices=[],  # переопределяется в __init__ методе
         widget=forms.Select(attrs={'class': 'form-control'}),
         required=False
+    )
+    component = forms.ChoiceField(
+        label=u"Направление",
+        choices=[],  # переопределяется в __init__ методе
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=False,
     )
     number = forms.IntegerField(
         label=u"Номер тикета",
@@ -73,12 +73,12 @@ class ReportForm(forms.Form):
     )
 
     dt_from = forms.DateField(
-        label=u"Время работы. С",
+        label=u"Создан с",
         required=False,
         widget=DatePicker(attrs={'class': 'form-control'})
     )
     dt_to = forms.DateField(
-        label=u"Время работы. По",
+        label=u"Создан по",
         widget=DatePicker(attrs={'class': 'form-control'}),
         required=False
     )
