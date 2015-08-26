@@ -37,9 +37,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    #
-    'djtrac',
     'django_select2',
+    'djsupervisor',
+    'djtrac',
 )
 
 MIDDLEWARE_CLASSES = (
