@@ -1,8 +1,8 @@
-# ansible-playbook -i prod install_webserver.yml
+# ansible-playbook -i prod install_webserver.yml --ask-sudo-pass -v
 ---
 - hosts: webserver
   sudo: yes
-  remote_user: root
+#  remote_user: root
 
   vars:
     virtualenv_path: /home/trac_extra/virt_env
@@ -11,7 +11,7 @@
     repo_path: /home/trac_extra/repo
     requirements_path: "{{ repo_path }}/djtrac/requirements.txt"
     log_path: /var/log/trac_extra
-    track_db_path: /vagrant/trac.db
+#    track_db_path: /vagrant/trac.db  -> see inventory file
 
   tasks:
     - include: playbooks/install_packages.yml
@@ -50,9 +50,23 @@
       shell: "{{ virtualenv_path }}/bin/python {{ repo_path }}/djtrac/manage.py collectstatic --noinput"
       sudo_user: trac_extra
 
+    - name: Make migrations
+      shell: "{{ virtualenv_path }}/bin/python {{ repo_path }}/djtrac/manage.py migrate"
+      sudo_user: trac_extra
+
     - name: Create www log directory
       file: path={{ log_path }}/www owner=www-data state=directory
 
-    - include: playbooks/restart_roster.yml
+    - name: Create www directory for apache fastcgi
+      file: path=/var/www/trac-extra owner=www-data state=directory
+
+    - name: Create apache cofig file
+      template: src=templates/apache2.tpl dest=/etc/apache2/sites-available/trac-extra owner=root mode=0644
+
+    - name: Restart apache2
+      service: name=apache2 state=restarted
+
+
+    - include: playbooks/restart.yml
 
 

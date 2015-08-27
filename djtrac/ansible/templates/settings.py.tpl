@@ -14,5 +14,6 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'djtrac/trac.db'),
     },
-
 }
+
+ALLOWED_HOSTS = ['{{ allowed_host }}']
