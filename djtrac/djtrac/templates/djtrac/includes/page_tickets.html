@@ -6,9 +6,7 @@
 
 <div class="bs-table" >
       <table class="table table-condensed table-bordered" >
-          {% if page and page.paginator.num_pages and page.paginator.num_pages > 1 %}
-            <caption>{% include "djtrac/includes/b3_paginator.html" %}</caption>
-          {% endif %}
+
           <thead>
             <tr>
               <th>#</th>
@@ -25,9 +23,9 @@
           </thead>
           <tbody>
 
-            {% for ticket in page.object_list %}
+            {% for ticket in tickets %}
                 <tr class={% if ticket.status == 'closed' %}success{% elif ticket.status == 'assigned' %}warning{% elif ticket.status == 'new'%}danger{% endif %}>
-                    <td>{{ forloop.counter|add:page.start_index|add:"-1" }}</td>
+                    <td>{{ forloop.counter }}</td>
                     <td><a href="{{ HTTP_PATH_TO_TRAC }}{{ ticket.id }}">{{ ticket.id}}</a></td>
                     <td>{{ ticket.summary }}</td>
                     <td>{{ ticket.time|to_datetime }}</td>

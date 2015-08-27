@@ -54,15 +54,15 @@ def main(request):
                 grouped_tickets[component] = OrderedDict()
                 for milestone in milestones:
                     if tickets.filter(component=component, milestone=milestone).exists():
-                        grouped_tickets[component][milestone] = get_page(request, tickets.filter(component=component, milestone=milestone), 20)
+                        grouped_tickets[component][milestone] = tickets.filter(component=component, milestone=milestone)
 
         elif group_by_components:
             for component in components:
-                grouped_tickets[component] = get_page(request, tickets.filter(component=component), 20)
+                grouped_tickets[component] = tickets.filter(component=component)
 
         elif group_by_milestone:
             for milestone in milestones:
-                grouped_tickets[milestone] = get_page(request, tickets.filter(milestone=milestone), 20)
+                grouped_tickets[milestone] = tickets.filter(milestone=milestone)
 
     c = {
         'form': form,
