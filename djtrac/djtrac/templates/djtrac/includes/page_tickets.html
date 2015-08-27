@@ -12,8 +12,12 @@
               <th>#</th>
               <th>{{ sort_params.id.icon|safe }}<a href="{{ sort_params.id.url }}">№</a></th>
               <th>{{ sort_params.summary.icon|safe }}<a href="{{ sort_params.summary.url }}">Название</a></th>
-              <th>{{ sort_params.time.icon|safe }}<a href="{{ sort_params.time.url }}">Открытие тикета</a></th>
-              <th>{{ sort_params.changetime.icon|safe }}<a href="{{ sort_params.changetime.url }}" >Последнее изменение</a></th>
+              <th style="min-width: 85px;">{{ sort_params.time.icon|safe }}
+                  <a href="{{ sort_params.time.url }}">Создан</a>
+              </th>
+              <th style="min-width: 85px;">{{ sort_params.changetime.icon|safe }}
+                  <a href="{{ sort_params.changetime.url }}" >Изменен</a>
+              </th>
               <th>{{ sort_params.priority.icon|safe }}<a href="{{ sort_params.priority.url }}" >Приоритет</a></th>
               <th>{{ sort_params.owner.icon|safe }}<a href="{{ sort_params.owner.url }}">Исполнитель</a></th>
               <th>{{ sort_params.milestone.icon|safe }}<a href="{{ sort_params.milestone.url }}">Этап</a></th>
@@ -28,12 +32,35 @@
                     <td>{{ forloop.counter }}</td>
                     <td><a href="{{ HTTP_PATH_TO_TRAC }}{{ ticket.id }}">{{ ticket.id}}</a></td>
                     <td>{{ ticket.summary }}</td>
-                    <td>{{ ticket.time|to_datetime }}</td>
-                    <td>{{ ticket.changetime|to_datetime }}</td>
-                    <td>{{ ticket.priority }}</td>
+                    <td title="{{ ticket.time|to_datetime}}">{{ ticket.time|to_datetime|date:'Y-m-d' }}</td>
+                    <td title="{{ ticket.changetime|to_datetime }}">{{ ticket.changetime|to_datetime|date:'Y-m-d' }}</td>
+                    <td>
+                        <span class="label
+                            {% if ticket.priority == 'низкий' %}label-info{% endif %}
+                            {% if ticket.priority == 'нормальный' %}label-primary{% endif %}
+                            {% if ticket.priority == 'высокий' %}label-warning{% endif %}
+                            {% if ticket.priority == 'блокирующий' %}label-danger{% endif %}
+                            ">
+                        {{ ticket.priority }}
+                        </span>
+                    </td>
                     <td>{{ ticket.owner }}</td>
                     <td>{{ ticket.milestone }}</td>
-                    <td>{{ ticket.status }}</td>
+                    <td>
+                        <span class="
+                            {% if ticket.status == 'closed' %}
+                                label
+                                {% if ticket.resolution == 'fixed' %}
+                                    label-success
+                                {% else %}
+                                    label-default
+                                {% endif %}
+                            {% endif %}
+                        ">
+                            {{ ticket.status }}
+                            {% if ticket.resolution %}- {{ ticket.resolution }}{% endif %}
+                        </span>
+                    </td>
                     <td>{{ ticket.keywords }}</td>
                 </tr>
                 {% if show_description %}

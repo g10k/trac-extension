@@ -23,7 +23,6 @@ def main(request):
         component = form.cleaned_data.get('component')
         number = form.cleaned_data.get('number')
         keyword = form.cleaned_data.get('keyword')
-        print "keyword", keyword
         dt_from = form.cleaned_data.get('dt_from')
         dt_to = form.cleaned_data.get('dt_to')
         group_by_components = form.cleaned_data.get('group_by_components')
@@ -68,7 +67,8 @@ def main(request):
         'form': form,
         'tickets':tickets,
         'sort_params': prepare_sort_params(
-            ('id', 'summary', 'time', 'changetime', 'milestone','priority', 'owner','status','keywords'), request
+            ('id', 'summary', 'time', 'changetime', 'milestone', 'priority', 'owner', 'status', 'keywords'),
+            request
         ),
         'page': get_page(request, tickets, 100) if not group_by_components and not group_by_milestone else [],
         'group_by_components': group_by_components,

@@ -12,8 +12,8 @@ def to_datetime(t):
     :param t: время в микросекундах
     :return:
     """
-    if not t: return "no time"
-    return datetime.datetime.fromtimestamp(int(t*0.000001))
+    if t:
+        return datetime.datetime.fromtimestamp(int(t*0.000001))
 
 
 class AddParameter(Node):
