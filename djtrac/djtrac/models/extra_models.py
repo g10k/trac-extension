@@ -9,7 +9,7 @@ MILESTONE_CHOICES = (trac_models.Milestone.objects.values_list('name', 'name').d
 class Project(models.Model):
     name = models.TextField(blank=True)
     description = models.TextField(blank=True, null=True)
-    users = models.ManyToManyField(User, related_name=u'allowed_projects')
+    user_projects = models.ManyToManyField(User, related_name='allowed_projects', through='UserProject')
 
     def __unicode__(self):
         return u"%s" % (self.name,)
@@ -17,6 +17,34 @@ class Project(models.Model):
     class Meta:
         verbose_name = u"Проект"
         verbose_name_plural = u"Проекты"
+
+
+class UserProject(models.Model):
+    user = models.ForeignKey(User, related_name='user_projects')
+    project = models.ForeignKey(Project)
+    notification = models.BooleanField(u"Оповещать по почте", default=False)
+
+    def __unicode__(self):
+        return u"%s: %s" % (self.user, self.project)
+
+    class Meta:
+        verbose_name = u"Проект пользователя"
+        verbose_name_plural = u"Проекты пользователей"
+
+
+class NotificationHistory(models.Model):
+    notificated_milestone = models.CharField(max_length=255, verbose_name=u"Название этапа, которому принадлежал тикет во время отправки.", choices=MILESTONE_CHOICES)
+    ticket = models.IntegerField(u"Номер тикета по которому было оповещение")
+    user = models.ForeignKey(User, related_name='notification_history')
+    dc = models.DateTimeField(u"Время, когда выслано оповещение(письмо)", auto_now_add=True)
+
+    def __unicode__(self):
+        return u"%s %s: %s" % (self.user, self.ticket, self.notificated_milestone)
+
+    class Meta:
+        verbose_name = u"История уведомлений (писем)"
+        verbose_name_plural = u"История уведомлений (писем)"
+
 
 
 class ProjectComponent(models.Model):

@@ -51,22 +51,22 @@
                 <div class="panel-heading" >Направление: {{ component }}</div>
             </div>
             <ul class="list-group">
-                {% for mitestone, page in milestones.iteritems %}
+                {% for mitestone, tickets in milestones.iteritems %}
                     <li class="list-group-item" >
                         <a data-toggle='collapse' href="#milestone_{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
                             Этап: {{ mitestone|default:"не указан" }}</a>
-                        {{ page.paginator.object_list|length }} тикетов
+                        {{ tickets|length }} тикетов
                     </li>
                     {% include 'djtrac/includes/page_tickets.html' with collapse=True %}
                 {% endfor %}
             </ul>
         {% endfor %}
     {% elif group_by_components or group_by_milestone %}
-          {% for component_or_milestone, page in grouped_tickets.iteritems %}
+          {% for component_or_milestone, tickets in grouped_tickets.iteritems %}
               <li class="list-group-item" >
                 <a data-toggle='collapse' href="#milestone_{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
                     {{ component_or_milestone|default:"не указан" }}</a>
-                {{ page.paginator.object_list|length }} тикетов
+                {{ tickets|length }} тикетов
               </li>
               {% include 'djtrac/includes/page_tickets.html' with collapse=True %}
           {% endfor %}
