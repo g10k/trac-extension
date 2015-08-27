@@ -1,7 +1,9 @@
 # -*- encoding: utf-8 -*-
 import datetime
+import os
 from django import template
 from django.template import Node, resolve_variable, TemplateSyntaxError
+from django.conf import settings
 from djtrac.datatools.reports import url_params
 register = template.Library()
 
@@ -14,6 +16,11 @@ def to_datetime(t):
     """
     if t:
         return datetime.datetime.fromtimestamp(int(t*0.000001))
+
+
+@register.filter
+def djtrac_ticket_url(ticket_number):
+    return os.path.join(settings.HTTP_PATH_TO_TRAC, "neo/ticket/", str(ticket_number))
 
 
 class AddParameter(Node):

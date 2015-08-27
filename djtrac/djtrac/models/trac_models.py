@@ -231,7 +231,7 @@ class Ticket(models.Model):
         managed = False
         db_table = 'ticket'
 
-
+#
 # class TicketChange(models.Model):
 #     ticket = models.IntegerField(blank=True, null=True)
 #     time = models.IntegerField(blank=True, null=True)
@@ -244,8 +244,8 @@ class Ticket(models.Model):
 #         managed = False
 #         db_table = 'ticket_change'
 #         unique_together = (('ticket', 'time', 'field'),)
-#
-#
+
+
 # class TicketCustom(models.Model):
 #     ticket = models.IntegerField(blank=True, null=True)
 #     name = models.TextField(blank=True, null=True)
