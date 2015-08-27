@@ -37,9 +37,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    #
-    'djtrac',
     'django_select2',
+    'djsupervisor',
+    'djtrac',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -143,6 +143,7 @@ USE_TZ = True
 # https://docs.cproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 HTTP_PATH_TO_TRAC = 'https://trac.soft-way.biz/'
