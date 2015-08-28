@@ -30,7 +30,15 @@
             {% for ticket in tickets %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td><a href="{{ ticket.id|djtrac_ticket_url }}">{{ ticket.id}}</a></td>
+                    <td>
+                        <a href="{{ ticket.id|djtrac_ticket_url }}">
+                        {% if ticket.status == 'closed' %}
+                            <s>{{ ticket.id }}</s>
+                        {% else %}
+                            {{ ticket.id }}
+                        {% endif %}
+                        </a>
+                    </td>
                     <td>{{ ticket.summary }}</td>
                     <td title="{{ ticket.time|to_datetime}}">{{ ticket.time|to_datetime|date:'Y-m-d' }}</td>
                     <td title="{{ ticket.changetime|to_datetime }}">{{ ticket.changetime|to_datetime|date:'Y-m-d' }}</td>
