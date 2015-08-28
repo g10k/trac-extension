@@ -28,7 +28,7 @@
           <tbody>
 
             {% for ticket in tickets %}
-                <tr class={% if ticket.status == 'closed' %}success{% elif ticket.status == 'assigned' %}warning{% elif ticket.status == 'new'%}danger{% endif %}>
+                <tr>
                     <td>{{ forloop.counter }}</td>
                     <td><a href="{{ ticket.id|djtrac_ticket_url }}">{{ ticket.id}}</a></td>
                     <td>{{ ticket.summary }}</td>

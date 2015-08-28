@@ -1,2 +1,2 @@
 [webserver]
-192.168.156.150
+192.168.156.150 track_db_path=/vagrant/trac.db allowed_host=localhost

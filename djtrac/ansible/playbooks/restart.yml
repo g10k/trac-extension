@@ -1,5 +1,5 @@
 ---
-- name: Stop roster
+- name: Stop trac_extra
   shell: "{{ virtualenv_path }}/bin/python {{ repo_path }}/djtrac/manage.py supervisor stop all"
 
 - name: Stop supervisord
@@ -11,5 +11,5 @@
 - name: Start supervisord
   shell: "{{ virtualenv_path }}/bin/python {{ repo_path }}/djtrac/manage.py supervisor -d"
 
-- name: Start mis_mm
+- name: Start trac_extra
   shell: "{{ virtualenv_path }}/bin/python {{ repo_path }}/djtrac/manage.py supervisor start all"
