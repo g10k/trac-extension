@@ -10,6 +10,8 @@ class Project(models.Model):
     name = models.TextField(blank=True)
     description = models.TextField(blank=True, null=True)
     user_projects = models.ManyToManyField(User, related_name='allowed_projects', through='UserProject')
+    target_users = models.ManyToManyField('TargetUser', verbose_name='Пользователи проекта', blank=True)
+    target_groups = models.ManyToManyField('TargetGroup', verbose_name='Группы пользователей проекта', blank=True)
 
     def __unicode__(self):
         return u"%s" % (self.name,)
@@ -70,3 +72,44 @@ class ProjectMilestone(models.Model):
     class Meta:
         verbose_name = u"Этап в проекте"
         verbose_name_plural = u"Этапы в проекте"
+
+
+class TargetUser(models.Model):
+    name = models.CharField(max_length=255, verbose_name=u"Имя")
+    email = models.EmailField(verbose_name=u"Почта")
+    description = models.TextField(verbose_name=u"Описание", help_text=u"Должность и т.п.")
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = u"Пользователь продукта"
+        verbose_name_plural = u"Пользователи продукта"
+
+class TargetGroup(models.Model):
+    name = models.CharField(max_length=255, verbose_name=u"Имя")
+    users = models.ManyToManyField(TargetUser, verbose_name=u"Пользователи")
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = u"Группа пользователей продукта"
+        verbose_name_plural = u"Группы пользователей продукта"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

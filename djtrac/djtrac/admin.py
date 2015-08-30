@@ -1,14 +1,16 @@
 
 from django.contrib import admin
 
-from .models import Ticket, Project, ProjectComponent, ProjectMilestone, UserProject, NotificationHistory
+import models
 
-admin.site.register(Ticket)
-admin.site.register(Project)
-admin.site.register(UserProject)
-admin.site.register(ProjectComponent)
-admin.site.register(ProjectMilestone)
-admin.site.register(NotificationHistory)
+admin.site.register(models.Ticket)
+admin.site.register(models.Project)
+admin.site.register(models.UserProject)
+admin.site.register(models.ProjectComponent)
+admin.site.register(models.ProjectMilestone)
+admin.site.register(models.NotificationHistory)
+admin.site.register(models.TargetUser)
+admin.site.register(models.TargetGroup)
 
 
 
