@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from djtrac.datatools.users import components_for_user, milestones_for_user
-from djtrac.models import ProjectMilestone, Ticket
+from djtrac import models
 from django_select2.widgets import AutoHeavySelect2Widget
 from django_select2.fields import AutoSelect2Field
 from django_select2 import NO_ERR_RESP
@@ -23,7 +23,7 @@ class SelfChoices(AutoSelect2Field):
         if not hasattr(self, 'res_map'):
             self.res_map = {}
         keyword = term
-        keywords_db = list(Ticket.objects.filter(keywords__icontains=keyword).values_list('keywords', flat=True).distinct())
+        keywords_db = list(models.Ticket.objects.filter(keywords__icontains=keyword).values_list('keywords', flat=True).distinct())
         # Некоторые keywords из БД нужно распарсить:  'blog, django'
         result_keywords = []
         for kw in keywords_db:
@@ -101,7 +101,7 @@ class ReportForm(forms.Form):
         if user:
             self.fields['component'].choices = list([EMPTY_CHOICE]) + [(component_name, component_name) for component_name in components_for_user(user)]
             self.fields['milestone'].choices = list([EMPTY_CHOICE]) + [(milestone_name, milestone_name) for milestone_name in milestones_for_user(user)]
-        current_milestone = ProjectMilestone.objects.filter(is_current=True).first()
+        current_milestone = models.ProjectMilestone.objects.filter(is_current=True).first()
         self.fields['milestone'].initial = current_milestone.milestone_name if current_milestone else False
 
 
@@ -118,3 +118,8 @@ class CustomAuthenticationForm(AuthenticationForm):
         label=_("Password"),
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
+
+class TicketReleaseNote(forms.ModelForm):
+    class Meta:
+        model = models.TicketReleaseNote
+        fields = ('description', 'target_users', 'target_groups')

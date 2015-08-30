@@ -4,7 +4,7 @@ import os
 from django import template
 from django.template import Node, resolve_variable, TemplateSyntaxError
 from django.conf import settings
-from djtrac.datatools.reports import url_params
+from djtrac.utils import url_params
 register = template.Library()
 
 @register.filter

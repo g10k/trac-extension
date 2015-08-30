@@ -231,6 +231,17 @@ class Ticket(models.Model):
         managed = False
         db_table = 'ticket'
 
+    def get_release_note(self):
+        import djtrac.models.extra_models
+        qs = djtrac.models.extra_models.TicketReleaseNote.objects.filter(ticket=self.id)
+        if qs:
+            return qs[0]
+        else:
+            return None
+
+    def get_id_str(self):
+        return str(self.id)
+
 #
 # class TicketChange(models.Model):
 #     ticket = models.IntegerField(blank=True, null=True)

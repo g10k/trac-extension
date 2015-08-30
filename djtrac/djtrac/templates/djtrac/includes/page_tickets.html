@@ -20,9 +20,10 @@
               </th>
               <th>{{ sort_params.priority.icon|safe }}<a href="{{ sort_params.priority.url }}" >Приоритет</a></th>
               <th>{{ sort_params.owner.icon|safe }}<a href="{{ sort_params.owner.url }}">Исполнитель</a></th>
-              <th>{{ sort_params.milestone.icon|safe }}<a href="{{ sort_params.milestone.url }}">Этап</a></th>
+              <th style="min-width: 130px;">{{ sort_params.milestone.icon|safe }}<a href="{{ sort_params.milestone.url }}">Этап</a></th>
               <th>{{ sort_params.status.icon|safe }}<a href="{{ sort_params.status.url }}">Состояние</a></th>
               <th>{{ sort_params.keywords.icon|safe }}<a href="{{ sort_params.keywords.url }}">Ключевые слова</a></th>
+              <th>Замечания о выпуске</th>
             </tr>
           </thead>
           <tbody>
@@ -30,7 +31,7 @@
             {% for ticket in tickets %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>
+                    <td id="{{ ticket.id }}">
                         <a href="{{ ticket.id|djtrac_ticket_url }}">
                         {% if ticket.status == 'closed' %}
                             <s>#{{ ticket.id }}</s>
@@ -70,6 +71,16 @@
                         </span>
                     </td>
                     <td>{{ ticket.keywords }}</td>
+                    <td>
+                        <a href="{% url 'djtrac.views.release_note.edit' ticket.id %}?next={{ request.get_full_path|add:'#'|add:ticket.get_id_str|urlencode }}"
+                           class="btn btn-xs btn-info  center-block">
+                            {% if ticket.get_release_note %}
+                                <span class="glyphicon glyphicon-edit"></span>
+                            {% else %}
+                                <span class="glyphicon glyphicon-plus"></span>
+                            {% endif %}
+                        </a>
+                    </td>
                 </tr>
                 {% if show_description %}
                     <tr>

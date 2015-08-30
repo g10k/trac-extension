@@ -9,8 +9,7 @@ from django.contrib.auth.decorators import login_required
 
 from djtrac.models import Ticket, ProjectMilestone
 from djtrac.forms import ReportForm
-from djtrac.utils import timestamp_from_date
-from djtrac.datatools.reports import prepare_sort_params, get_page
+from djtrac.utils import timestamp_from_date, prepare_sort_params, get_page
 
 @login_required(login_url='/login/')
 def main(request):
