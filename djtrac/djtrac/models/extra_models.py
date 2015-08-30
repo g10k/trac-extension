@@ -2,8 +2,10 @@
 from django.contrib.auth.models import User
 from django.db import models
 import trac_models
-COMPONENT_CHOICES = (trac_models.Component.objects.values_list('name', 'name').distinct())
-MILESTONE_CHOICES = (trac_models.Milestone.objects.values_list('name', 'name').distinct())
+# COMPONENT_CHOICES = (trac_models.Component.objects.values_list('name', 'name').distinct())
+# MILESTONE_CHOICES = (trac_models.Milestone.objects.values_list('name', 'name').distinct())
+COMPONENT_CHOICES = []
+MILESTONE_CHOICES = []
 
 
 class Project(models.Model):
@@ -31,8 +33,22 @@ class UserProject(models.Model):
         verbose_name = u"Проект пользователя"
         verbose_name_plural = u"Проекты пользователей"
 
+class UserTicketNotification(models.Model):
+    """ Тут хранятся значения актуальные на последний раз отправки письма
+    """
+    user = models.ForeignKey(User, related_name='last_notified_tickets')
+    ticket = models.IntegerField(u"Номер тикета, по которому было выслано уведомление")
 
-class NotificationHistory(models.Model):
+    def __unicode__(self):
+        return u"%s: %s" % (self.user, self.ticket)
+
+    class Meta:
+        verbose_name = u"ПользователеТикет"
+        verbose_name_plural = u"ПользователеТикеты"
+
+
+class Notification(models.Model):
+
     notificated_milestone = models.CharField(max_length=255, verbose_name=u"Название этапа, которому принадлежал тикет во время отправки.", choices=MILESTONE_CHOICES)
     ticket = models.IntegerField(u"Номер тикета по которому было оповещение")
     user = models.ForeignKey(User, related_name='notification_history')

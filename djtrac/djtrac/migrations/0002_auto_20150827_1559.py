@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import sys
 
 from django.db import models, migrations
 from django.conf import settings
@@ -22,7 +23,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'component',
-                'managed': False,
+                'managed': True if 'test' in sys.argv else False,
             },
         ),
         migrations.CreateModel(
@@ -35,7 +36,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'milestone',
-                'managed': False,
+                'managed': True if 'test' in sys.argv else False,
             },
         ),
         migrations.CreateModel(
