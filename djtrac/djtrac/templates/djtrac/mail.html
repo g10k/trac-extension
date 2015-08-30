@@ -1,10 +1,5 @@
 {% load djtrac_tags %}
 
-Проект: {{ project }}
-Этап: {{ project_tickets.current_milestone }}
-Новые тикеты: {{ project_tickets.new_tickets|join:", " }}
+Новые тикеты: {{ all_tickets.new_tickets|join:", " }}
 
-Измененные тикеты:
-{% for ticket, message in project_tickets.changed_tickets.items %}
-    {{ ticket }}: {{ message }}
-{% endfor %}
+Удаленные тикеты: {{ all_tickets.left_tickets|join:", " }}

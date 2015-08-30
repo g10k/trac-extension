@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 from django.conf import settings
+import sys
 
 
 class Migration(migrations.Migration):
@@ -35,7 +36,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'ticket',
-                'managed': False,
+                 'managed': True if 'test' in sys.argv else False,
             },
         ),
         migrations.CreateModel(

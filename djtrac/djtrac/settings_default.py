@@ -152,10 +152,10 @@ HTTP_PATH_TO_TRAC = 'https://trac.soft-way.biz/'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'your@gmail.com'
-EMAIL_HOST_PASSWORD = 'pass'
+EMAIL_HOST_USER = 'g10k.mai@gmail.com'
+EMAIL_HOST_PASSWORD = 'g51505k5'
 EMAIL_PORT = 587
 # бэкенд для тестовой отправки имейлов в консоль и файл
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/app-messages'

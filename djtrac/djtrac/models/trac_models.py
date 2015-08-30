@@ -231,10 +231,21 @@ class Ticket(models.Model):
         managed = False
         db_table = 'ticket'
 
-#
+
 # class TicketChange(models.Model):
+#     """ Нам нужны изменения:
+#             field       oldvalue    newvalue
+#             ____________________________
+#             status      new         assigned  - создали тикет
+#             owner       NULL        telminov  - Установили владельца
+#             owner       telminov    g10k      - Сменили владельца
+#             milestone   2015-08     2015-09   - Сменили milestone
+#
+#     """
+#
+#
 #     ticket = models.IntegerField(blank=True, null=True)
-#     time = models.IntegerField(blank=True, null=True)
+#     time = models.IntegerField(blank=True, primary_key=True)
 #     author = models.TextField(blank=True, null=True)
 #     field = models.TextField(blank=True, null=True)
 #     oldvalue = models.TextField(blank=True, null=True)
@@ -244,6 +255,9 @@ class Ticket(models.Model):
 #         managed = False
 #         db_table = 'ticket_change'
 #         unique_together = (('ticket', 'time', 'field'),)
+#
+#     def __unicode__(self):
+#         return "%s" % self.ticket
 
 
 # class TicketCustom(models.Model):
