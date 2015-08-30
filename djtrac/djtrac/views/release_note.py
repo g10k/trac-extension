@@ -26,3 +26,13 @@ def edit(request, ticket_id):
 
     c['form'] = form
     return render(request, 'djtrac/release_note/edit.html', c)
+
+
+@login_required(login_url='/login/')
+def send_mail(request):
+    c = {}
+
+    milestone_name = request.GET['milestone']
+
+
+    return render(request, 'djtrac/release_note/send_mail.html', c)

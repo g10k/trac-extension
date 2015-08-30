@@ -82,7 +82,7 @@
                     <td>
                         <a href="{% url 'djtrac.views.release_note.edit' ticket.id %}?next={{ request.get_full_path|add:'#'|add:ticket.get_id_str|urlencode }}"
                            class="btn btn-xs btn-info  center-block">
-                            {% if ticket.get_release_note %}
+                            {% if ticket.get_release_note.description %}
                                 <span class="glyphicon glyphicon-edit"></span>
                             {% else %}
                                 <span class="glyphicon glyphicon-plus"></span>

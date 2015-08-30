@@ -2,25 +2,26 @@
 import urllib
 from collections import OrderedDict
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
-from djtrac.models import Ticket, ProjectMilestone
-from djtrac.forms import ReportForm
+from djtrac import models
+from djtrac import forms
 from djtrac.utils import timestamp_from_date, prepare_sort_params, get_page
 
 @login_required(login_url='/login/')
 def main(request):
     if not request.GET:
-        current_milestone = ProjectMilestone.objects.filter(is_current=True).first()
+        current_milestone = models.ProjectMilestone.objects.filter(is_current=True).first()
         if current_milestone:
             return redirect(
                 "%s?%s" % (reverse('djtrac.views.main.main'),
                            urllib.urlencode({'milestone': current_milestone.milestone_name.encode('utf-8')}))
             )
-    form = ReportForm(request.GET or None, user=request.user)
+    form = forms.ReportForm(request.GET or None, user=request.user)
     tickets = []
     group_by_components = None
     group_by_milestone = None
@@ -37,7 +38,7 @@ def main(request):
         group_by_milestone = form.cleaned_data.get('group_by_milestone')
         show_description = form.cleaned_data.get('show_description')
 
-        tickets = Ticket.objects.get_allowed(request.user).\
+        tickets = models.Ticket.objects.get_allowed(request.user).\
             extra(select={
                 'is_closed': "status='closed'",
                 'priority_index': "case "
@@ -82,9 +83,18 @@ def main(request):
             for milestone in milestones:
                 grouped_tickets[milestone] = tickets.filter(milestone=milestone)
 
+    have_not_send_release_notes = models.TicketReleaseNote.objects.filter(
+        ticket__in=[t.id for t in tickets],
+        mail_dt__isnull=True,
+    ).filter(
+        Q(target_users__isnull=False) | Q(target_groups__isnull=False)
+    ).exclude(
+        description=''
+    ).exists()
+
     c = {
         'form': form,
-        'tickets':tickets,
+        'tickets': tickets,
         'sort_params': prepare_sort_params(
             ('id', 'summary', 'time', 'changetime', 'milestone', 'priority_index', 'owner', 'status', 'keywords'),
             request
@@ -94,7 +104,8 @@ def main(request):
         'group_by_milestone': group_by_milestone,
         'grouped_tickets': grouped_tickets,
         'show_description': show_description,
-        'HTTP_PATH_TO_TRAC': settings.HTTP_PATH_TO_TRAC
+        'HTTP_PATH_TO_TRAC': settings.HTTP_PATH_TO_TRAC,
+        'have_not_send_release_notes': have_not_send_release_notes,
     }
 
     return render(request, 'djtrac/index.html', c)

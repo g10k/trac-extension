@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^logout/$', logout, {'next_page': '/'}),
     url(r'^$', 'djtrac.views.main.main'),
     url(r'^(\d+)/release_note/$', 'djtrac.views.release_note.edit'),
+    url(r'^send_release_note/$', 'djtrac.views.release_note.send_mail'),
     url(r'^select2/', include('django_select2.urls')),
 ]
 
