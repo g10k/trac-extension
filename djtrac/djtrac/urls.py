@@ -4,6 +4,8 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth.views import login, logout
 from djtrac.forms import CustomAuthenticationForm
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
@@ -13,3 +15,5 @@ urlpatterns = [
     url(r'^(\d+)/release_note/$', 'djtrac.views.release_note.edit'),
     url(r'^select2/', include('django_select2.urls')),
 ]
+
+urlpatterns += static('npm', document_root=settings.BASE_DIR + '/node_modules', show_indexes=True)

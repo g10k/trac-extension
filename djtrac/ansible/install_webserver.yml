@@ -54,6 +54,9 @@
       shell: "{{ virtualenv_path }}/bin/python {{ repo_path }}/djtrac/manage.py migrate"
       sudo_user: trac_extra
 
+    - name: Install npm packages
+      npm: path={{ repo_path }}/djtrac
+
     - name: Create www log directory
       file: path={{ log_path }}/www owner=www-data state=directory
 
