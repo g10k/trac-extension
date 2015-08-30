@@ -8,10 +8,8 @@ from django.contrib.auth.models import User
 
 from djtrac.models import extra_models
 from djtrac.models import trac_models
-from djtrac.management.commands.check_notifications import not_notificated, get_mailing_info, get_user_tickets
-
-
-from django.core.urlresolvers import reverse
+from djtrac.management.commands.check_notifications import get_mailing_info, get_user_tickets, NEW_TICKETS, LEFT_TICKETS
+from djtrac.datatools.users import get_user_milestones
 
 MOBIL_MED_PRO = u"Мобил МЕД"
 SOFT_WAY_PRO = u"Софт-вей"
@@ -32,11 +30,6 @@ class TestMain(TestCase):
         self._ticket_number += 1
         return self._ticket_number
 
-    # @classmethod
-    # def setUpTestData(cls):
-    #     cls.generate_data()
-    #     print "setUP!!!"
-
     def setUp(self):
 
         test_user = User(
@@ -46,7 +39,6 @@ class TestMain(TestCase):
         )
         test_user.save()
         self.client = Client()
-
 
 
     @classmethod
@@ -103,34 +95,14 @@ class TestMain(TestCase):
                     status='new',
                     keywords=random.choice(KEYWORDS),
                 )
-        trac_models.TicketChange.objects.create(
-            ticket=number,
-            time=number*100,
-            author= random.choice(DEVELOPERS),
-            field='status',
-            oldvalue='',
-            newvalue='new'
-        )
         return ticket
 
-    def _change_ticket(self, number):
-        ticket = trac_models.Ticket.objects.get(id=number)
-        ticket.milestone = MILESTONE_08
-        ticket.save()
-        trac_models.TicketChange.objects.create(
-            ticket=number,
-            time=number*random.randint(1,100),
-            author= random.choice(DEVELOPERS),
-            field='milestone',
-            oldvalue=MILESTONE_09,
-            newvalue=MILESTONE_08
-        )
 
     def test_new_tickets_in_not_notificated(self):
         nn = get_mailing_info()
         for user in self.users:
-            new_tickets_count = nn[user.username]['new_tickets']
-            user_project_tickets = len(get_user_tickets(user))
+            new_tickets_count = nn[user.username][NEW_TICKETS]
+            user_project_tickets = len(get_user_tickets(user, only_notification=True))
             self.assertEqual(
                 len(new_tickets_count),
                 user_project_tickets
@@ -142,8 +114,8 @@ class TestMain(TestCase):
         self.assertEqual(len(mail.outbox), len(mailing_info))
         mailing_info = get_mailing_info()
         for user in self.users:
-            self.assertEqual(mailing_info[user.username]['new_tickets'], set([]))
-            self.assertEqual(mailing_info[user.username]['left_tickets'], set([]))
+            self.assertEqual(mailing_info[user.username][NEW_TICKETS], set([]))
+            self.assertEqual(mailing_info[user.username][LEFT_TICKETS], set([]))
 
 
     def test_new_tickets(self):
@@ -152,29 +124,24 @@ class TestMain(TestCase):
         for i in range(new_tickets_count):
             self._generate_ticket(MILESTONE_09, self.get_ticket_number())
         mailing_info = get_mailing_info()
-        milestone_09_users = [user for user in self.users if user in self._get_user_milestones(user)]
+        milestone_09_users = [user for user in self.users if user in get_user_milestones(user,only_notification=True)]
 
         for user in milestone_09_users:
-            self.assertEqual(len(mailing_info[user.username].get('new_tickets')), new_tickets_count)
-
-    def _get_user_milestones(self, user):
-        projects = [up.project for up in user.user_projects.filter(notification=True)]
-        milestones = [milestone for pro in projects for milestone in pro.allowed_milestones.values_list('milestone_name', flat=True)]
-        return milestones
+            self.assertEqual(len(mailing_info[user.username].get(NEW_TICKETS)), new_tickets_count)
 
     def test_left_tickets(self):
         mailing_info = get_mailing_info()
         call_command('check_notifications')
         changed_tickets = {}
         for user in self.users:
-            random_ticket = random.choice(list(mailing_info[user.username]['new_tickets']))
+            random_ticket = random.choice(list(mailing_info[user.username][NEW_TICKETS]))
             changed_tickets[user.username] = random_ticket
             ticket = trac_models.Ticket.objects.get(id=random_ticket)
             ticket.milestone = MILESTONE_08
             ticket.save()
         mailing_info = get_mailing_info()
         for user in self.users:
-            self.assertTrue(mailing_info[user.username]['left_tickets'])
+            self.assertTrue(mailing_info[user.username][LEFT_TICKETS])
 
     def test_close_ticket(self):
         pass

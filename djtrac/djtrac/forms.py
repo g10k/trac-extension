@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import ugettext_lazy as _
 
 
-from djtrac.datatools.users import components_for_user, milestones_for_user
+from djtrac.datatools.users import components_for_user, get_user_milestones
 from djtrac.models import ProjectMilestone, Ticket
 from django_select2.widgets import AutoHeavySelect2Widget
 from django_select2.fields import AutoSelect2Field
@@ -100,7 +100,7 @@ class ReportForm(forms.Form):
         super(ReportForm, self).__init__(*args,**kwargs)
         if user:
             self.fields['component'].choices = list([EMPTY_CHOICE]) + [(component_name, component_name) for component_name in components_for_user(user)]
-            self.fields['milestone'].choices = list([EMPTY_CHOICE]) + [(milestone_name, milestone_name) for milestone_name in milestones_for_user(user)]
+            self.fields['milestone'].choices = list([EMPTY_CHOICE]) + [(milestone_name, milestone_name) for milestone_name in get_user_milestones(user)]
         current_milestone = ProjectMilestone.objects.filter(is_current=True).first()
         self.fields['milestone'].initial = current_milestone.milestone_name if current_milestone else False
 
