@@ -123,3 +123,8 @@ class TicketReleaseNote(forms.ModelForm):
     class Meta:
         model = models.TicketReleaseNote
         fields = ('description', 'target_users', 'target_groups')
+
+    def __init__(self, *args, **kwargs):
+        super(TicketReleaseNote, self).__init__(*args, **kwargs)
+        self.fields['target_users'].widget.attrs.update({'class': 'form-control'})
+        self.fields['target_groups'].widget.attrs.update({'class': 'form-control'})

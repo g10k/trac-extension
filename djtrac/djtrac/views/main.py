@@ -38,7 +38,16 @@ def main(request):
         show_description = form.cleaned_data.get('show_description')
 
         tickets = Ticket.objects.get_allowed(request.user).\
-            extra(select={'is_closed': "status='closed'"}, order_by=['is_closed'])
+            extra(select={
+                'is_closed': "status='closed'",
+                'priority_index': "case "
+                                  "priority when 'низкий' then 1 "
+                                  "when 'нормальный' then 2 "
+                                  "when 'высокий' then 3 "
+                                  "when 'блокирующий' then 4 "
+                                  "end"
+            }).\
+            order_by('is_closed', '-priority_index')
         if milestone:
             tickets = tickets.filter(milestone=milestone)
         if component:
@@ -77,7 +86,7 @@ def main(request):
         'form': form,
         'tickets':tickets,
         'sort_params': prepare_sort_params(
-            ('id', 'summary', 'time', 'changetime', 'milestone', 'priority', 'owner', 'status', 'keywords'),
+            ('id', 'summary', 'time', 'changetime', 'milestone', 'priority_index', 'owner', 'status', 'keywords'),
             request
         ),
         'page': get_page(request, tickets, 100) if not group_by_components and not group_by_milestone else [],

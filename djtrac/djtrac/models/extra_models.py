@@ -101,9 +101,9 @@ class TargetGroup(models.Model):
 class TicketReleaseNote(models.Model):
     ticket = models.IntegerField(verbose_name=u"Тикет")
     description = models.TextField(verbose_name=u"Описание")
-    target_users = models.ManyToManyField(TargetUser, verbose_name=u"Пользвоатели",
+    target_users = models.ManyToManyField(TargetUser, verbose_name=u"Пользователи",
                                           help_text=u"к кому относятся результаты работы по тикету", blank=True)
-    target_groups = models.ManyToManyField(TargetGroup, verbose_name=u"Группы пользвоателей",
+    target_groups = models.ManyToManyField(TargetGroup, verbose_name=u"Группы пользователей",
                                            help_text=u"к кому относятся результаты работы по тикету", blank=True)
     mail_dt = models.DateTimeField(verbose_name=u"Время когда уведомление было отправлено пользвоателям", null=True)
 

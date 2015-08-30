@@ -5,28 +5,32 @@
 {% endif %}
 
 <div class="bs-table" >
-      <table class="table table-condensed table-bordered" >
-
-          <thead>
+    <table class="table table-condensed table-bordered" >
+        <thead>
             <tr>
-              <th>#</th>
-              <th>{{ sort_params.id.icon|safe }}<a href="{{ sort_params.id.url }}">№</a></th>
-              <th>{{ sort_params.summary.icon|safe }}<a href="{{ sort_params.summary.url }}">Название</a></th>
-              <th style="min-width: 85px;">{{ sort_params.time.icon|safe }}
-                  <a href="{{ sort_params.time.url }}">Создан</a>
-              </th>
-              <th style="min-width: 85px;">{{ sort_params.changetime.icon|safe }}
-                  <a href="{{ sort_params.changetime.url }}" >Изменен</a>
-              </th>
-              <th>{{ sort_params.priority.icon|safe }}<a href="{{ sort_params.priority.url }}" >Приоритет</a></th>
-              <th>{{ sort_params.owner.icon|safe }}<a href="{{ sort_params.owner.url }}">Исполнитель</a></th>
-              <th style="min-width: 130px;">{{ sort_params.milestone.icon|safe }}<a href="{{ sort_params.milestone.url }}">Этап</a></th>
-              <th>{{ sort_params.status.icon|safe }}<a href="{{ sort_params.status.url }}">Состояние</a></th>
-              <th>{{ sort_params.keywords.icon|safe }}<a href="{{ sort_params.keywords.url }}">Ключевые слова</a></th>
-              <th>Замечания о выпуске</th>
+            <th>#</th>
+            <th>{{ sort_params.id.icon|safe }}<a href="{{ sort_params.id.url }}">№</a></th>
+            <th>{{ sort_params.summary.icon|safe }}<a href="{{ sort_params.summary.url }}">Название</a></th>
+            <th style="min-width: 85px;">{{ sort_params.time.icon|safe }}
+              <a href="{{ sort_params.time.url }}">Создан</a>
+            </th>
+            <th style="min-width: 85px;">{{ sort_params.changetime.icon|safe }}
+              <a href="{{ sort_params.changetime.url }}" >Изменен</a>
+            </th>
+            <th>{{ sort_params.priority_index.icon|safe }}<a href="{{ sort_params.priority_index.url }}" >Приоритет</a></th>
+            <th>{{ sort_params.owner.icon|safe }}<a href="{{ sort_params.owner.url }}">Исполнитель</a></th>
+
+            {% if not request.GET.milestone %}
+            <th style="min-width: 130px;">{{ sort_params.milestone.icon|safe }}<a href="{{ sort_params.milestone.url }}">Этап</a></th>
+            {% endif %}
+
+            <th>{{ sort_params.status.icon|safe }}<a href="{{ sort_params.status.url }}">Состояние</a></th>
+            <th>{{ sort_params.keywords.icon|safe }}<a href="{{ sort_params.keywords.url }}">Ключевые слова</a></th>
+            <th>Замечания о выпуске</th>
             </tr>
-          </thead>
-          <tbody>
+        </thead>
+
+        <tbody>
 
             {% for ticket in tickets %}
                 <tr>
@@ -54,7 +58,11 @@
                         </span>
                     </td>
                     <td>{{ ticket.owner }}</td>
+
+                    {% if not request.GET.milestone %}
                     <td>{{ ticket.milestone }}</td>
+                    {% endif %}
+
                     <td>
                         <span class="
                             {% if ticket.status == 'closed' %}
@@ -89,9 +97,9 @@
                     </tr>
                 {% endif %}
             {% endfor %}
-          </tbody>
-      </table>
-      </div>
+        </tbody>
+    </table>
+</div>
 {% if group_by_components or group_by_milestone%}
     </div>
 {% endif %}
