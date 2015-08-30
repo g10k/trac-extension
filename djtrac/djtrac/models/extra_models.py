@@ -98,7 +98,21 @@ class TargetGroup(models.Model):
         verbose_name_plural = u"Группы пользователей продукта"
 
 
+class TicketReleaseNote(models.Model):
+    ticket = models.IntegerField(verbose_name=u"Тикет")
+    description = models.TextField(verbose_name=u"Описание")
+    target_users = models.ManyToManyField(TargetUser, verbose_name=u"Пользвоатели",
+                                          help_text=u"к кому относятся результаты работы по тикету", blank=True)
+    target_groups = models.ManyToManyField(TargetGroup, verbose_name=u"Группы пользвоателей",
+                                           help_text=u"к кому относятся результаты работы по тикету", blank=True)
+    mail_dt = models.DateTimeField(verbose_name=u"Время когда уведомление было отправлено пользвоателям", null=True)
 
+    def __unicode__(self):
+        return '#%s' % self.ticket
+
+    class Meta:
+        verbose_name = u"Замечания к выпуску"
+        verbose_name_plural = u"Замечания к выпуску"
 
 
 

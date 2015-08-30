@@ -33,9 +33,9 @@
                     <td>
                         <a href="{{ ticket.id|djtrac_ticket_url }}">
                         {% if ticket.status == 'closed' %}
-                            <s>{{ ticket.id }}</s>
+                            <s>#{{ ticket.id }}</s>
                         {% else %}
-                            {{ ticket.id }}
+                            #{{ ticket.id }}
                         {% endif %}
                         </a>
                     </td>
