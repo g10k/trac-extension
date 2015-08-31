@@ -5,39 +5,38 @@
 {% endif %}
 
 <div class="bs-table" >
-      <table class="table table-condensed table-bordered" >
-
-          <thead>
+    <table class="table table-condensed table-bordered table-hover" >
+        <thead>
             <tr>
-              <th>#</th>
-              <th>{{ sort_params.id.icon|safe }}<a href="{{ sort_params.id.url }}">№</a></th>
-              <th>{{ sort_params.summary.icon|safe }}<a href="{{ sort_params.summary.url }}">Название</a></th>
-              <th style="min-width: 85px;">{{ sort_params.time.icon|safe }}
-                  <a href="{{ sort_params.time.url }}">Создан</a>
-              </th>
-              <th style="min-width: 85px;">{{ sort_params.changetime.icon|safe }}
-                  <a href="{{ sort_params.changetime.url }}" >Изменен</a>
-              </th>
-              <th>{{ sort_params.priority.icon|safe }}<a href="{{ sort_params.priority.url }}" >Приоритет</a></th>
-              <th>{{ sort_params.owner.icon|safe }}<a href="{{ sort_params.owner.url }}">Исполнитель</a></th>
-              <th>{{ sort_params.milestone.icon|safe }}<a href="{{ sort_params.milestone.url }}">Этап</a></th>
-              <th>{{ sort_params.status.icon|safe }}<a href="{{ sort_params.status.url }}">Состояние</a></th>
-              <th>{{ sort_params.keywords.icon|safe }}<a href="{{ sort_params.keywords.url }}">Ключевые слова</a></th>
+            <th>#</th>
+            <th>{{ sort_params.id.icon|safe }}<a href="{{ sort_params.id.url }}">№</a></th>
+            <th>{{ sort_params.summary.icon|safe }}<a href="{{ sort_params.summary.url }}">Название</a></th>
+            <th style="min-width: 85px;">{{ sort_params.time.icon|safe }}
+              <a href="{{ sort_params.time.url }}">Создан</a>
+            </th>
+            <th style="min-width: 85px;">{{ sort_params.changetime.icon|safe }}
+              <a href="{{ sort_params.changetime.url }}" >Изменен</a>
+            </th>
+            <th>{{ sort_params.priority_index.icon|safe }}<a href="{{ sort_params.priority_index.url }}" >Приоритет</a></th>
+            <th>{{ sort_params.owner.icon|safe }}<a href="{{ sort_params.owner.url }}">Исполнитель</a></th>
+
+            {% if not request.GET.milestone %}
+            <th style="min-width: 130px;">{{ sort_params.milestone.icon|safe }}<a href="{{ sort_params.milestone.url }}">Этап</a></th>
+            {% endif %}
+
+            <th>{{ sort_params.status.icon|safe }}<a href="{{ sort_params.status.url }}">Состояние</a></th>
+            <th>{{ sort_params.keywords.icon|safe }}<a href="{{ sort_params.keywords.url }}">Ключевые слова</a></th>
+            <th>Замечания о выпуске</th>
             </tr>
-          </thead>
-          <tbody>
+        </thead>
+
+        <tbody>
 
             {% for ticket in tickets %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>
-                        <a href="{{ ticket.id|djtrac_ticket_url }}">
-                        {% if ticket.status == 'closed' %}
-                            <s>{{ ticket.id }}</s>
-                        {% else %}
-                            {{ ticket.id }}
-                        {% endif %}
-                        </a>
+                    <td id="{{ ticket.id }}">
+                        {% include 'djtrac/includes/ticket_link.html' %}
                     </td>
                     <td>{{ ticket.summary }}</td>
                     <td title="{{ ticket.time|to_datetime}}">{{ ticket.time|to_datetime|date:'Y-m-d' }}</td>
@@ -53,7 +52,11 @@
                         </span>
                     </td>
                     <td>{{ ticket.owner }}</td>
+
+                    {% if not request.GET.milestone %}
                     <td>{{ ticket.milestone }}</td>
+                    {% endif %}
+
                     <td>
                         <span class="
                             {% if ticket.status == 'closed' %}
@@ -70,6 +73,16 @@
                         </span>
                     </td>
                     <td>{{ ticket.keywords }}</td>
+                    <td>
+                        <a href="{% url 'djtrac.views.release_note.edit' ticket.id %}?next={{ request.get_full_path|add:'#'|add:ticket.get_id_str|urlencode }}"
+                           class="btn btn-xs btn-info  center-block">
+                            {% if ticket.get_release_note.description %}
+                                <span class="glyphicon glyphicon-edit"></span>
+                            {% else %}
+                                <span class="glyphicon glyphicon-plus"></span>
+                            {% endif %}
+                        </a>
+                    </td>
                 </tr>
                 {% if show_description %}
                     <tr>
@@ -78,9 +91,9 @@
                     </tr>
                 {% endif %}
             {% endfor %}
-          </tbody>
-      </table>
-      </div>
+        </tbody>
+    </table>
+</div>
 {% if group_by_components or group_by_milestone%}
     </div>
 {% endif %}

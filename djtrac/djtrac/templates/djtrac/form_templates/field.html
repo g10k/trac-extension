@@ -1,15 +1,21 @@
-<div class="form-group{% if field.errors %} has-error{% endif %}">
-    <label for="{{ field.id_for_label }}" class="col-sm-4 control-label">
+<div class="form-group {% if field.errors %}has-error{% endif %}">
+    <label for="{{ field.id_for_label }}" class="{{ label_class|default:'col-sm-4' }} control-label">
         {{ field.label }}
         {% if field.help_text %}
-                <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="{{ field.help_text }}" ></span>
+            <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="{{ field.help_text }}" ></span>
         {% endif %}
     </label>
-    <div class="col-sm-8 input-group">
+    <div class="{{ input_class|default:'col-sm-8' }} input-group">
         {{ field }}
+
+        {% if addon %}
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-{{ addon }}"></span>
+            </span>
+        {% endif %}
+
         {% if field.errors %}
             <p class='help text-danger'><small>{{ field.errors|join:"" }}</small></p>
         {% endif %}
-
     </div>
 </div>

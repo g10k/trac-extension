@@ -231,21 +231,21 @@ class Ticket(models.Model):
         managed = False
         db_table = 'ticket'
 
+    def get_release_note(self):
+        import djtrac.models.extra_models
+        qs = djtrac.models.extra_models.TicketReleaseNote.objects.filter(ticket=self.id)
+        if qs:
+            return qs[0]
+        else:
+            return None
 
+    def get_id_str(self):
+        return str(self.id)
+
+#
 # class TicketChange(models.Model):
-#     """ Нам нужны изменения:
-#             field       oldvalue    newvalue
-#             ____________________________
-#             status      new         assigned  - создали тикет
-#             owner       NULL        telminov  - Установили владельца
-#             owner       telminov    g10k      - Сменили владельца
-#             milestone   2015-08     2015-09   - Сменили milestone
-#
-#     """
-#
-#
 #     ticket = models.IntegerField(blank=True, null=True)
-#     time = models.IntegerField(blank=True, primary_key=True)
+#     time = models.IntegerField(blank=True, null=True)
 #     author = models.TextField(blank=True, null=True)
 #     field = models.TextField(blank=True, null=True)
 #     oldvalue = models.TextField(blank=True, null=True)
@@ -255,9 +255,6 @@ class Ticket(models.Model):
 #         managed = False
 #         db_table = 'ticket_change'
 #         unique_together = (('ticket', 'time', 'field'),)
-#
-#     def __unicode__(self):
-#         return "%s" % self.ticket
 
 
 # class TicketCustom(models.Model):

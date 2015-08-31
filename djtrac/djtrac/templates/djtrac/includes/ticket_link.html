@@ -1,0 +1,9 @@
+{% load djtrac_tags %}
+
+<a href="{{ ticket.id|djtrac_ticket_url }}">
+    {% if ticket.status == 'closed' %}
+        <s>#{{ ticket.id }}</s>
+    {% else %}
+        #{{ ticket.id }}
+    {% endif %}
+</a>

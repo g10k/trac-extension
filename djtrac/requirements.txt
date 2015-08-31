@@ -2,3 +2,4 @@ Django==1.8.3
 Django-Select2==4.3.1
 django-supervisor==0.3.2
 flup==1.0.2
+lxml==3.4.4

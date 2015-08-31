@@ -1,0 +1,91 @@
+{% extends 'djtrac/base.html' %}
+
+{% block head %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+{% endblock %}
+
+
+{% block body %}
+<form method="post">{% csrf_token %}
+    <div class="row">
+        <div class="col-sm-7">
+            <h2>
+                Замечания к релизу
+                <a href="{% url 'djtrac.views.main.main' %}?milestone={{ request.GET.milestone }}">
+               {{ request.GET.milestone }}
+                </a>
+           </h2>
+        </div>
+
+        <div class="col-sm-5">
+            {% if milestone_release.mail_dt %}
+                <div class="alert alert-info" role="alert">
+                    Уведомления отправлены {{ milestone_release.mail_dt }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <small>
+        <a href="{% url 'djtrac.views.release_note.milestone' %}?milestone={{ request.GET.milestone }}&next={{ request.get_full_path|urlencode }}">
+            {% if milestone_release.planned_date %}
+                Релиз запланирован на {{ milestone_release.planned_date }}
+            {% else %}
+                Дата релиза еще не определена
+            {% endif %}
+        </a>
+    </small>
+
+
+    {% if group_notes or user_notes %}
+        {% for group, notes in group_notes.items %}
+            <h4>
+                {{ group.name|capfirst }}
+                <small>{{ group.get_user_emails|join:', ' }}</small>
+            </h4>
+
+            {% for note in notes %}
+                {% include 'djtrac/release_note/send_mail_note.html' %}
+            {% endfor %}
+        {% endfor %}
+
+        {% for user, notes in user_notes.items %}
+            <h3>
+                {{ user.name|capfirst }}
+                <small>{{ user.email }}</small>
+            </h3>
+
+            {% for note in notes %}
+                {% include 'djtrac/release_note/send_mail_note.html' %}
+            {% endfor %}
+        {% endfor %}
+
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            Нет замечаний для отправки по релизу.
+        </div>
+    {% endif %}
+
+    <div class="row" style="margin-top: 10px">
+        <div class="col-sm-12">
+            <button type="submit" class="btn btn-block btn-primary"
+                    {% if not group_notes and not user_notes %}
+                        disabled="disabled" title="Нечего слать"
+                    {% elif milestone_release.mail_dt %}
+                        disabled="disabled" title="Рассылка уже проводилась"
+                    {% elif not milestone_release.planned_date %}
+                        disabled="disabled" title="Не определена дата релиза"
+                    {% endif %}
+                >
+                <span class="glyphicon glyphicon-envelope"></span>
+                Отправить
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}

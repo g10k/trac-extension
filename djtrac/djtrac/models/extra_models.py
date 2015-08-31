@@ -12,6 +12,8 @@ class Project(models.Model):
     name = models.TextField(blank=True)
     description = models.TextField(blank=True, null=True)
     user_projects = models.ManyToManyField(User, related_name='allowed_projects', through='UserProject')
+    target_users = models.ManyToManyField('TargetUser', verbose_name='Пользователи проекта', blank=True)
+    target_groups = models.ManyToManyField('TargetGroup', verbose_name='Группы пользователей проекта', blank=True)
 
     def __unicode__(self):
         return u"%s" % (self.name,)
@@ -85,3 +87,77 @@ class ProjectMilestone(models.Model):
     class Meta:
         verbose_name = u"Этап в проекте"
         verbose_name_plural = u"Этапы в проекте"
+
+
+class TargetUser(models.Model):
+    name = models.CharField(max_length=255, verbose_name=u"Имя")
+    email = models.EmailField(verbose_name=u"Почта")
+    description = models.TextField(verbose_name=u"Описание", help_text=u"Должность и т.п.")
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = u"Пользователь продукта"
+        verbose_name_plural = u"Пользователи продукта"
+
+class TargetGroup(models.Model):
+    name = models.CharField(max_length=255, verbose_name=u"Имя")
+    users = models.ManyToManyField(TargetUser, verbose_name=u"Пользователи")
+
+    class Meta:
+        verbose_name = u"Группа пользователей продукта"
+        verbose_name_plural = u"Группы пользователей продукта"
+
+    def __unicode__(self):
+        return self.name
+
+    def get_user_emails(self):
+        return self.users.values_list('email', flat=True)
+
+class TicketReleaseNote(models.Model):
+    ticket = models.IntegerField(verbose_name=u"Тикет")
+    description = models.TextField(verbose_name=u"Описание", blank=True)
+    target_users = models.ManyToManyField(TargetUser, verbose_name=u"Пользователи",
+                                          help_text=u"к кому относятся результаты работы по тикету", blank=True)
+    target_groups = models.ManyToManyField(TargetGroup, verbose_name=u"Группы пользователей",
+                                           help_text=u"к кому относятся результаты работы по тикету", blank=True)
+
+    class Meta:
+        verbose_name = u"Замечания к выпуску"
+        verbose_name_plural = u"Замечания к выпуску"
+
+    def __unicode__(self):
+        return '#%s' % self.ticket
+
+    def get_ticket(self):
+        import djtrac.models.trac_models
+        return djtrac.models.trac_models.Ticket.objects.get(id=self.ticket)
+
+    def get_target_users(self):
+        users = set()
+        for user in self.target_users.all():
+            users.add(user)
+        for group in self.target_groups.all():
+            users.update(group.users.all())
+        return users
+
+
+class MilestoneRelease(models.Model):
+    milestone = models.CharField(max_length=255, verbose_name=u'Этап', unique=True)
+    planned_date = models.DateField(verbose_name=u'Дата релиза', help_text=u'Планируемая дата релиза', null=True, blank=True)
+    mail_dt = models.DateTimeField(verbose_name=u"Время рассылки уведомлений", null=True)
+
+class ProjectTestServer(models.Model):
+    project = models.ForeignKey(Project, verbose_name=u'Проект')
+    name = models.CharField(max_length=255, verbose_name=u"Название", unique=True)
+    address = models.IPAddressField(verbose_name=u'IP адрес')
+    url = models.URLField(verbose_name=u'http адрес')
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = u"Тестовый сервер"
+        verbose_name_plural = u"Тестовые сервера"
+

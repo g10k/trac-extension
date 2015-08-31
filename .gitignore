@@ -6,3 +6,4 @@ settings.py
 extra.db
 supervisord.log
 djtrac/ansible/prod
+node_modules

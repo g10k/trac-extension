@@ -17,3 +17,5 @@ DATABASES = {
 }
 
 ALLOWED_HOSTS = ['{{ allowed_host }}']
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
