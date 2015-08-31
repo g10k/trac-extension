@@ -55,12 +55,12 @@ class TestMain(TestCase):
         mobil_med = extra_models.Project.objects.create(name=MOBIL_MED_PRO, description=u'Проект Мобилмед')
         soft_way = extra_models.Project.objects.create(name=SOFT_WAY_PRO, description=u'Проект Софт Вей')
 
-        extra_models.UserProject.objects.create(user=g10k, project=mobil_med, notification=True)
-        extra_models.UserProject.objects.create(user=leha, project=mobil_med, notification=True)
-        extra_models.UserProject.objects.create(user=telminov, project=mobil_med, notification=False)
+        extra_models.UserProject.objects.create(user=g10k, project=mobil_med, send_milestone_changes=True)
+        extra_models.UserProject.objects.create(user=leha, project=mobil_med, send_milestone_changes=True)
+        extra_models.UserProject.objects.create(user=telminov, project=mobil_med, send_milestone_changes=False)
 
-        extra_models.UserProject.objects.create(user=g10k, project=soft_way, notification=True)
-        extra_models.UserProject.objects.create(user=telminov, project=soft_way, notification=True)
+        extra_models.UserProject.objects.create(user=g10k, project=soft_way, send_milestone_changes=True)
+        extra_models.UserProject.objects.create(user=telminov, project=soft_way, send_milestone_changes=True)
 
         extra_models.ProjectMilestone.objects.create(project=mobil_med, milestone=MILESTONE_08)
         extra_models.ProjectMilestone.objects.create(project=mobil_med, milestone=MILESTONE_09, is_current=True)

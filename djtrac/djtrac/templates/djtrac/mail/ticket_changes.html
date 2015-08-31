@@ -1,0 +1,38 @@
+{% load djtrac_tags %}
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </head>
+    <body>
+        {% for milestone, milestone_tickets in milestones_tickets.items %}
+        <h3>Изменения по "{{ milestone }}"</h3>
+
+        {% if milestone_tickets.new %}
+            <h4>Новые тикеты:</h4>
+            <ul>
+                {% for ticket in milestone_tickets.new %}
+                    <li>
+                        <a href="{{ ticket.id|djtrac_ticket_url }}">#{{ ticket.id }}</a> {{ ticket.summary }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if milestone_tickets.left %}
+            <h4>Удаленные тикеты:</h4>
+            <ul>
+                {% for ticket in milestone_tickets.left %}
+                    <li>
+                        <a href="{{ ticket.id|djtrac_ticket_url }}">#{{ ticket.id }}</a> {{ ticket.summary }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {# TODO: ссылка на отчет #}
+
+    {% endfor %}
+
+    </body>
+</html>

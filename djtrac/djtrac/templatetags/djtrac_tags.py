@@ -19,8 +19,8 @@ def to_datetime(t):
 
 
 @register.filter
-def djtrac_ticket_url(ticket_number):
-    return os.path.join(settings.HTTP_PATH_TO_TRAC, "neo/ticket/", str(ticket_number))
+def djtrac_ticket_url(ticket_id):
+    return os.path.join(settings.HTTP_PATH_TO_TRAC, "neo/ticket/", str(ticket_id))
 
 
 class AddParameter(Node):

@@ -99,10 +99,10 @@ class ReportForm(forms.Form):
         user = kwargs.pop('user', None)
         super(ReportForm, self).__init__(*args,**kwargs)
         if user:
-            self.fields['component'].choices = list([EMPTY_CHOICE]) + [(component_name, component_name) for component_name in components_for_user(user)]
-            self.fields['milestone'].choices = list([EMPTY_CHOICE]) + [(milestone_name, milestone_name) for milestone_name in get_user_milestones(user)]
+            self.fields['component'].choices = list([EMPTY_CHOICE]) + [(component, component) for component in components_for_user(user)]
+            self.fields['milestone'].choices = list([EMPTY_CHOICE]) + [(milestone, milestone) for milestone in get_user_milestones(user)]
         current_milestone = ProjectMilestone.objects.filter(is_current=True).first()
-        self.fields['milestone'].initial = current_milestone.milestone_name if current_milestone else False
+        self.fields['milestone'].initial = current_milestone.milestone if current_milestone else False
 
 
 class CustomAuthenticationForm(AuthenticationForm):

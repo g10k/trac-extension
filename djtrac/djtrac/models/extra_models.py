@@ -24,7 +24,9 @@ class Project(models.Model):
 class UserProject(models.Model):
     user = models.ForeignKey(User, related_name='user_projects')
     project = models.ForeignKey(Project)
-    notification = models.BooleanField(u"Оповещать по почте", default=False)
+    send_milestone_changes = models.BooleanField(
+        u"Оповещать об изменениях", default=False,
+        help_text=u"оповещать об изменения состава текущих этапов по проектам пользователя")
 
     def __unicode__(self):
         return u"%s: %s" % (self.user, self.project)
