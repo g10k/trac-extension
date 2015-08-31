@@ -1,4 +1,5 @@
 # encoding: utf8
+from time import sleep
 import re
 from copy import deepcopy
 import lxml.html
@@ -39,54 +40,69 @@ def get_ticket_changes():
     return ticket_changes
 
 
+def process_changes():
+    ticket_changes = get_ticket_changes()
+
+    for user, milestones_tickets in ticket_changes.iteritems():
+        if not milestones_tickets:
+            continue
+
+        html_content = render_to_string(
+            'djtrac/mail/ticket_changes.html',
+            {'milestones_tickets': milestones_tickets}
+        )
+
+        subject = u'Изменения по "%s"' % u'", "'.join(milestones_tickets.keys())
+        user_instance = User.objects.get(username=user)
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [user_instance.email]
+
+        text_content = lxml.html.fromstring(html_content).text_content()
+        text_content = re.sub(r'\n\s+', '\n', text_content).strip()
+
+        sent_count = send_mail(
+            subject,
+            text_content,
+            html_message=html_content,
+            from_email=from_email,
+            recipient_list=recipient_list,
+            fail_silently=False,
+        )
+
+        if sent_count:
+            new_tickets = []
+            left_tickets = []
+            for milestone_tickets in milestones_tickets.values():
+                new_tickets.extend(milestone_tickets['new'])
+                left_tickets.extend(milestone_tickets['left'])
+
+            _save_user_tickets(
+                user,
+                new_tickets=[t.id for t in new_tickets],
+                left_tickets=[t.id for t in left_tickets],
+            )
+
+
 class Command(BaseCommand):
     args = ''
     help = u'Щлет уведомления об изменениях по тикетам текущих этапов пользователей, ' \
            u'подписанных на изменения.'
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--infinity', action='store_true', dest='infinity', default=False,
+            help=u'Работать в бесконечном цикле, периодически проверяя не появилось ли изменений по пользователям'
+        )
+
     def handle(self, *args, **options):
-        # TODO: добавить бесконечный цикл
+        work_infinity = options.get('infinity')
+        while True:
+            process_changes()
 
-        ticket_changes = get_ticket_changes()
-        for user, milestones_tickets in ticket_changes.iteritems():
-            if not milestones_tickets:
-                continue
+            if not work_infinity:
+                return
 
-            html_content = render_to_string(
-                'djtrac/mail/ticket_changes.html',
-                {'milestones_tickets': milestones_tickets}
-            )
-
-            subject = u'Изменения по "%s"' % u'", "'.join(milestones_tickets.keys())
-            user_instance = User.objects.get(username=user)
-            from_email = settings.EMAIL_HOST_USER
-            recipient_list = [user_instance.email]
-
-            text_content = lxml.html.fromstring(html_content).text_content()
-            text_content = re.sub(r'\n\s+', '\n', text_content).strip()
-
-            sent_count = send_mail(
-                subject,
-                text_content,
-                html_message=html_content,
-                from_email=from_email,
-                recipient_list=recipient_list,
-                fail_silently=False,
-            )
-
-            if sent_count:
-                new_tickets = []
-                left_tickets = []
-                for milestone_tickets in milestones_tickets.values():
-                    new_tickets.extend(milestone_tickets['new'])
-                    left_tickets.extend(milestone_tickets['left'])
-
-                _save_user_tickets(
-                    user,
-                    new_tickets=[t.id for t in new_tickets],
-                    left_tickets=[t.id for t in left_tickets],
-                )
-
+            sleep(60)
 
 
 def _save_user_tickets(user, left_tickets, new_tickets):
