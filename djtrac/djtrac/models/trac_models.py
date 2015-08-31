@@ -199,7 +199,7 @@ class TicketsManager(models.Manager):
         projects = user.allowed_projects.all()
         components = set()
         for project in projects:
-            components.update(project.allowed_components.values_list('component_name', flat=True))
+            components.update(project.allowed_components.values_list('component', flat=True))
         return self.filter(component__in=components)
 
 

@@ -8,7 +8,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from django.conf import settings
-from djtrac.models.extra_models import UserTicketNotification
+from djtrac.models.extra_models import UserCurrentMilestoneTicket
 from djtrac.datatools.users import get_user_tickets
 
 NEW_TICKETS = 'new_tickets'
@@ -18,9 +18,9 @@ LEFT_TICKETS = 'left_tickets'
 def _save_user_tickets(user, left_tickets, new_tickets):
     if type(user) in (str, unicode):
         user = User.objects.get(username=user)
-    UserTicketNotification.objects.filter(user=user, ticket__in=left_tickets).delete()
+    UserCurrentMilestoneTicket.objects.filter(user=user, ticket__in=left_tickets).delete()
     for ticket_id in new_tickets:
-        UserTicketNotification.objects.create(user=user, ticket=ticket_id)
+        UserCurrentMilestoneTicket.objects.create(user=user, ticket=ticket_id)
 
 
 def get_mailing_info():

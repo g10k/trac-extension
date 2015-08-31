@@ -40,7 +40,6 @@ class TestMain(TestCase):
         test_user.save()
         self.client = Client()
 
-
     @classmethod
     def setUpTestData(self):
         # Сделаем Project Mis_mm  к нему 1 milestone 08 месяца, 2 milestone 09 месяца - текущий. по 20 тикетов в каждом, закрытых и нет.
@@ -53,8 +52,8 @@ class TestMain(TestCase):
         leha = User.objects.create_user('leha', 'leha@mail.com', '3')
         self.users = [g10k, telminov, leha]
 
-        mobil_med = extra_models.Project.objects.create(name=MOBIL_MED_PRO,description=u'Проект Мобилмед')
-        soft_way = extra_models.Project.objects.create(name=SOFT_WAY_PRO,description=u'Проект Софт Вей')
+        mobil_med = extra_models.Project.objects.create(name=MOBIL_MED_PRO, description=u'Проект Мобилмед')
+        soft_way = extra_models.Project.objects.create(name=SOFT_WAY_PRO, description=u'Проект Софт Вей')
 
         extra_models.UserProject.objects.create(user=g10k, project=mobil_med, notification=True)
         extra_models.UserProject.objects.create(user=leha, project=mobil_med, notification=True)
@@ -63,21 +62,20 @@ class TestMain(TestCase):
         extra_models.UserProject.objects.create(user=g10k, project=soft_way, notification=True)
         extra_models.UserProject.objects.create(user=telminov, project=soft_way, notification=True)
 
-        extra_models.ProjectMilestone.objects.create(project=mobil_med, milestone_name=MILESTONE_08)
-        extra_models.ProjectMilestone.objects.create(project=mobil_med, milestone_name=MILESTONE_09, is_current=True)
-        extra_models.ProjectMilestone.objects.create(project=soft_way, milestone_name=SW_MILESTONE_TESTING, is_current=True)
+        extra_models.ProjectMilestone.objects.create(project=mobil_med, milestone=MILESTONE_08)
+        extra_models.ProjectMilestone.objects.create(project=mobil_med, milestone=MILESTONE_09, is_current=True)
+        extra_models.ProjectMilestone.objects.create(project=soft_way, milestone=SW_MILESTONE_TESTING, is_current=True)
 
         for component in COMPONENTS:
-            extra_models.ProjectComponent.objects.create(project=mobil_med, component_name=component)
+            extra_models.ProjectComponent.objects.create(project=mobil_med, component=component)
 
         self.projects = [mobil_med, soft_way]
         for project in self.projects:
-            milestones = list(project.allowed_milestones.values_list('milestone_name', flat=True))
+            milestones = list(project.allowed_milestones.values_list('milestone', flat=True))
             for rate, milestone in enumerate(milestones, start=1):
                 for i in range(self._ticket_number + 1, self._ticket_number + 21):
                     ticket_number = self.get_ticket_number()
                     self._generate_ticket(milestone, ticket_number)
-
 
     @classmethod
     def _generate_ticket(self, milestone, number):
@@ -86,17 +84,16 @@ class TestMain(TestCase):
         """
 
         ticket = trac_models.Ticket.objects.create(
-                    id=number,
-                    summary=u"Ticket number %s" % number,
-                    changetime=number*10,
-                    component=random.choice(COMPONENTS),
-                    milestone=milestone,
-                    owner=random.choice(DEVELOPERS),
-                    status='new',
-                    keywords=random.choice(KEYWORDS),
-                )
+            id=number,
+            summary=u"Ticket number %s" % number,
+            changetime=number * 10,
+            component=random.choice(COMPONENTS),
+            milestone=milestone,
+            owner=random.choice(DEVELOPERS),
+            status='new',
+            keywords=random.choice(KEYWORDS),
+        )
         return ticket
-
 
     def test_new_tickets_in_not_notificated(self):
         nn = get_mailing_info()
@@ -117,14 +114,13 @@ class TestMain(TestCase):
             self.assertEqual(mailing_info[user.username][NEW_TICKETS], set([]))
             self.assertEqual(mailing_info[user.username][LEFT_TICKETS], set([]))
 
-
     def test_new_tickets(self):
         call_command('check_notifications')
         new_tickets_count = random.randint(1, 10)
         for i in range(new_tickets_count):
             self._generate_ticket(MILESTONE_09, self.get_ticket_number())
         mailing_info = get_mailing_info()
-        milestone_09_users = [user for user in self.users if user in get_user_milestones(user,only_notification=True)]
+        milestone_09_users = [user for user in self.users if user in get_user_milestones(user, only_notification=True)]
 
         for user in milestone_09_users:
             self.assertEqual(len(mailing_info[user.username].get(NEW_TICKETS)), new_tickets_count)
@@ -148,5 +144,3 @@ class TestMain(TestCase):
 
     def test_reopen_ticket(self):
         pass
-
-

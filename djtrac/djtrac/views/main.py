@@ -19,7 +19,7 @@ def main(request):
         if current_milestone:
             return redirect(
                 "%s?%s" % (reverse('djtrac.views.main.main'),
-                           urllib.urlencode({'milestone': current_milestone.milestone_name.encode('utf-8')}))
+                           urllib.urlencode({'milestone': current_milestone.milestone.encode('utf-8')}))
             )
     form = ReportForm(request.GET or None, user=request.user)
     tickets = []
