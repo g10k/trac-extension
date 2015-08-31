@@ -1,5 +1,3 @@
-{% load djtrac_tags %}
-
 {% if group_by_components or group_by_milestone %}
     <div class="panel-collapse collapse" id="milestone_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" >
 {% endif %}
@@ -36,13 +34,7 @@
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td id="{{ ticket.id }}">
-                        <a href="{{ ticket.id|djtrac_ticket_url }}">
-                        {% if ticket.status == 'closed' %}
-                            <s>#{{ ticket.id }}</s>
-                        {% else %}
-                            #{{ ticket.id }}
-                        {% endif %}
-                        </a>
+                        {% include 'djtrac/includes/ticket_link.html' %}
                     </td>
                     <td>{{ ticket.summary }}</td>
                     <td title="{{ ticket.time|to_datetime}}">{{ ticket.time|to_datetime|date:'Y-m-d' }}</td>

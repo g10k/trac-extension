@@ -90,13 +90,15 @@ class TargetGroup(models.Model):
     name = models.CharField(max_length=255, verbose_name=u"Имя")
     users = models.ManyToManyField(TargetUser, verbose_name=u"Пользователи")
 
-    def __unicode__(self):
-        return self.name
-
     class Meta:
         verbose_name = u"Группа пользователей продукта"
         verbose_name_plural = u"Группы пользователей продукта"
 
+    def __unicode__(self):
+        return self.name
+
+    def get_user_emails(self):
+        return self.users.values_list('email', flat=True)
 
 class TicketReleaseNote(models.Model):
     ticket = models.IntegerField(verbose_name=u"Тикет")
@@ -107,14 +109,16 @@ class TicketReleaseNote(models.Model):
                                            help_text=u"к кому относятся результаты работы по тикету", blank=True)
     mail_dt = models.DateTimeField(verbose_name=u"Время когда уведомление было отправлено пользвоателям", null=True)
 
-    def __unicode__(self):
-        return '#%s' % self.ticket
-
     class Meta:
         verbose_name = u"Замечания к выпуску"
         verbose_name_plural = u"Замечания к выпуску"
 
+    def __unicode__(self):
+        return '#%s' % self.ticket
 
+    def get_ticket(self):
+        import djtrac.models.trac_models
+        return djtrac.models.trac_models.Ticket.objects.get(id=self.ticket)
 
 
 

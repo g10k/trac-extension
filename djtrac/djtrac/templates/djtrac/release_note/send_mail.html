@@ -1,6 +1,53 @@
 {% extends 'djtrac/base.html' %}
 
-{% block body %}
-    <h1>{{ request.GET.milestone }}</h1>
+{% block head %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+{% endblock %}
 
+
+{% block body %}
+<form method="post">{% csrf_token %}
+
+    <h2>
+        <a href="{% url 'djtrac.views.main.main' %}?milestone={{ request.GET.milestone }}">
+       {{ request.GET.milestone }}
+        </a>
+   </h2>
+
+    {% for group, notes in group_notes.items %}
+        <h3>
+            {{ group.name|capfirst }}
+            <small>{{ group.get_user_emails|join:', ' }}</small>
+        </h3>
+
+        {% for note in notes %}
+            {% include 'djtrac/release_note/send_mail_note.html' %}
+        {% endfor %}
+    {% endfor %}
+
+    {% for user, notes in user_notes.items %}
+        <h3>
+            {{ user.name|capfirst }}
+            <small>{{ user.email }}</small>
+        </h3>
+
+        {% for note in notes %}
+            {% include 'djtrac/release_note/send_mail_note.html' %}
+        {% endfor %}
+    {% endfor %}
+
+    <div class="row" style="margin-top: 10px">
+        <div class="col-sm-12">
+            <button type="submit" class="btn btn-block btn-primary">
+                <span class="glyphicon glyphicon-envelope"></span>
+                Отправить
+            </button>
+        </div>
+    </div>
+</form>
 {% endblock %}
