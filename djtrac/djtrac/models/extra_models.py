@@ -151,7 +151,6 @@ class MilestoneRelease(models.Model):
 class ProjectTestServer(models.Model):
     project = models.ForeignKey(Project, verbose_name=u'Проект')
     name = models.CharField(max_length=255, verbose_name=u"Название", unique=True)
-    address = models.IPAddressField(verbose_name=u'IP адрес')
     url = models.URLField(verbose_name=u'http адрес')
 
     def __unicode__(self):
