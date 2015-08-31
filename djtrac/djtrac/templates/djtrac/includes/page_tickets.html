@@ -1,9 +1,11 @@
+{% load djtrac_tags %}
+
 {% if group_by_components or group_by_milestone %}
     <div class="panel-collapse collapse" id="milestone_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" >
 {% endif %}
 
 <div class="bs-table" >
-    <table class="table table-condensed table-bordered" >
+    <table class="table table-condensed table-bordered table-hover" >
         <thead>
             <tr>
             <th>#</th>

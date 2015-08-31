@@ -130,7 +130,7 @@ DATABASE_ROUTERS = ['djtrac.db_router.AuthRouter',]
 
 LANGUAGE_CODE = 'RU-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -156,6 +156,6 @@ EMAIL_HOST_USER = 'your@gmail.com'
 EMAIL_HOST_PASSWORD = 'pass'
 EMAIL_PORT = 587
 # бэкенд для тестовой отправки имейлов в консоль и файл
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/app-messages'

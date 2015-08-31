@@ -1,0 +1,7 @@
+<h3>Замечания к релизу "{{ milestone }}"</h3>
+
+{% for note in notes %}
+    <h4>#{{ note.ticket }}</h4>
+    {{ note.description|safe }}
+    <hr>
+{% endfor %}

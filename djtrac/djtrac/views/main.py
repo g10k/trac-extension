@@ -83,9 +83,9 @@ def main(request):
             for milestone in milestones:
                 grouped_tickets[milestone] = tickets.filter(milestone=milestone)
 
-    have_not_send_release_notes = models.TicketReleaseNote.objects.filter(
+    have_release_notes = models.TicketReleaseNote.objects.filter(
         ticket__in=[t.id for t in tickets],
-        mail_dt__isnull=True,
+        # mail_dt__isnull=True,
     ).filter(
         Q(target_users__isnull=False) | Q(target_groups__isnull=False)
     ).exclude(
@@ -105,7 +105,7 @@ def main(request):
         'grouped_tickets': grouped_tickets,
         'show_description': show_description,
         'HTTP_PATH_TO_TRAC': settings.HTTP_PATH_TO_TRAC,
-        'have_not_send_release_notes': have_not_send_release_notes,
+        'have_release_notes': have_release_notes,
     }
 
     return render(request, 'djtrac/index.html', c)

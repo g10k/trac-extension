@@ -128,3 +128,15 @@ class TicketReleaseNote(forms.ModelForm):
         super(TicketReleaseNote, self).__init__(*args, **kwargs)
         self.fields['target_users'].widget.attrs.update({'class': 'form-control'})
         self.fields['target_groups'].widget.attrs.update({'class': 'form-control'})
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+
+        if cleaned_data['description'] and not (
+            cleaned_data['target_users'] or cleaned_data['target_groups']
+        ):
+            err = forms.ValidationError(u'Укажите пользователей')
+            self.add_error('target_users', err)
+            self.add_error('target_groups', err)
+
+        return cleaned_data

@@ -120,7 +120,13 @@ class TicketReleaseNote(models.Model):
         import djtrac.models.trac_models
         return djtrac.models.trac_models.Ticket.objects.get(id=self.ticket)
 
-
+    def get_target_users(self):
+        users = set()
+        for user in self.target_users.all():
+            users.add(user)
+        for group in self.target_groups.all():
+            users.update(group.users.all())
+        return users
 
 
 

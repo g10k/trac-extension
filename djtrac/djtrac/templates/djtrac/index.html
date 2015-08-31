@@ -37,9 +37,9 @@
                 </button>
             </div>
 
-            {% if have_not_send_release_notes and request.GET.milestone %}
+            {% if have_release_notes and request.GET.milestone %}
             <div class="col-sm-3 col-sm-offset-5">
-                <a href="{% url 'djtrac.views.release_note.send_mail' %}?milestone={{ request.GET.milestone }}&next={{ request.get_full_path|urlencode }}"
+                <a href="{% url 'djtrac.views.release_note.send_mails' %}?milestone={{ request.GET.milestone }}&next={{ request.get_full_path|urlencode }}"
                    class="btn btn-default">
                         <span class="glyphicon glyphicon-envelope"></span>
                         Отправить замечания о выпуске
