@@ -85,7 +85,6 @@ def main(request):
 
     have_release_notes = models.TicketReleaseNote.objects.filter(
         ticket__in=[t.id for t in tickets],
-        # mail_dt__isnull=True,
     ).filter(
         Q(target_users__isnull=False) | Q(target_groups__isnull=False)
     ).exclude(

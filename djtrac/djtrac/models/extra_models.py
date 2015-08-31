@@ -107,7 +107,6 @@ class TicketReleaseNote(models.Model):
                                           help_text=u"к кому относятся результаты работы по тикету", blank=True)
     target_groups = models.ManyToManyField(TargetGroup, verbose_name=u"Группы пользователей",
                                            help_text=u"к кому относятся результаты работы по тикету", blank=True)
-    mail_dt = models.DateTimeField(verbose_name=u"Время когда уведомление было отправлено пользвоателям", null=True)
 
     class Meta:
         verbose_name = u"Замечания к выпуску"
@@ -129,10 +128,10 @@ class TicketReleaseNote(models.Model):
         return users
 
 
-
-
-
-
+class MilestoneRelease(models.Model):
+    milestone = models.CharField(max_length=255, verbose_name=u'Этап', unique=True)
+    planned_date = models.DateField(verbose_name=u'Дата релиза', help_text=u'Планируемая дата релиза', null=True, blank=True)
+    mail_dt = models.DateTimeField(verbose_name=u"Время рассылки уведомлений", null=True)
 
 
 

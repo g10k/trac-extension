@@ -119,6 +119,7 @@ class CustomAuthenticationForm(AuthenticationForm):
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
 
+
 class TicketReleaseNote(forms.ModelForm):
     class Meta:
         model = models.TicketReleaseNote
@@ -140,3 +141,13 @@ class TicketReleaseNote(forms.ModelForm):
             self.add_error('target_groups', err)
 
         return cleaned_data
+
+
+class MilestoneRelease(forms.ModelForm):
+    class Meta:
+        model = models.MilestoneRelease
+        fields = ('planned_date', )
+
+    def __init__(self, *args, **kwargs):
+        super(MilestoneRelease, self).__init__(*args, **kwargs)
+        self.fields['planned_date'].widget.attrs.update({'class': 'form-control'})

@@ -1,5 +1,9 @@
 {
   "dependencies": {
+    "bootstrap": "^3.3.5",
+    "eonasdan-bootstrap-datetimepicker": "^4.15.35",
+    "jquery": "^2.1.4",
+    "moment": "^2.10.6",
     "tinymce": "^4.2.4"
   }
 }

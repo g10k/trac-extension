@@ -13,7 +13,7 @@
 {% block body %}
 <form method="post">{% csrf_token %}
     <div class="row">
-        <div class="col-sm-8">
+        <div class="col-sm-7">
             <h2>
                 Замечания к релизу
                 <a href="{% url 'djtrac.views.main.main' %}?milestone={{ request.GET.milestone }}">
@@ -22,14 +22,24 @@
            </h2>
         </div>
 
-        <div class="col-sm-4">
-            {% if latest_mail_dt %}
+        <div class="col-sm-5">
+            {% if milestone_release.mail_dt %}
                 <div class="alert alert-info" role="alert">
-                    Уведомления отправлены {{ latest_mail_dt }}
+                    Уведомления отправлены {{ milestone_release.mail_dt }}
                 </div>
             {% endif %}
         </div>
     </div>
+
+    <small>
+        <a href="{% url 'djtrac.views.release_note.milestone' %}?milestone={{ request.GET.milestone }}&next={{ request.get_full_path|urlencode }}">
+            {% if milestone_release.planned_date %}
+                Релиз запланирован на {{ milestone_release.planned_date }}
+            {% else %}
+                Дата релиза еще не определена
+            {% endif %}
+        </a>
+    </small>
 
 
     {% if group_notes or user_notes %}
@@ -65,9 +75,11 @@
         <div class="col-sm-12">
             <button type="submit" class="btn btn-block btn-primary"
                     {% if not group_notes and not user_notes %}
-                        disabled="disabled"
-                    {% elif latest_mail_dt %}
-                        disabled="disabled"
+                        disabled="disabled" title="Нечего слать"
+                    {% elif milestone_release.mail_dt %}
+                        disabled="disabled" title="Рассылка уже проводилась"
+                    {% elif not milestone_release.planned_date %}
+                        disabled="disabled" title="Не определена дата релиза"
                     {% endif %}
                 >
                 <span class="glyphicon glyphicon-envelope"></span>
