@@ -91,7 +91,7 @@ class ProjectMilestone(models.Model):
     is_current = models.BooleanField(u"Текущий этап", default=False)
 
     def __unicode__(self):
-        return u"%s: %s" % (self.project, self.mileston,)
+        return u"%s: %s" % (self.project, self.milestone,)
 
     class Meta:
         verbose_name = u"Этап в проекте"
