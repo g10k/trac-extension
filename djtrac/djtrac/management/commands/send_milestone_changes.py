@@ -2,6 +2,7 @@
 import re
 from copy import deepcopy
 import lxml.html
+from django.utils.timezone import now
 from django.core.management.base import BaseCommand
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -10,17 +11,6 @@ from django.conf import settings
 from djtrac import models
 from djtrac.datatools.users import get_user_tickets
 
-
-def _save_user_tickets(user, left_tickets, new_tickets):
-    if type(user) in (str, unicode):
-        user = User.objects.get(username=user)
-
-    models.UserCurrentMilestoneTicket.objects.filter(user=user, ticket__in=left_tickets).delete()
-
-    for ticket_id in new_tickets:
-        models.UserCurrentMilestoneTicket.objects.create(user=user, ticket=ticket_id)
-
-    # TODO: добавить сохранении в models.UserNotification
 
 def get_ticket_changes():
     ticket_changes = {}
@@ -40,7 +30,10 @@ def get_ticket_changes():
 
         for left_ticket_id in left_tickets:
             ticket = models.Ticket.objects.get(id=left_ticket_id)
-            user_milestone = user_milestones.setdefault(ticket.milestone, deepcopy(default_milestone_info))
+            previous_milestone = models.UserNotificationMilestoneChanges.objects.\
+                filter(user=user, ticket=left_ticket_id).\
+                latest().milestone
+            user_milestone = user_milestones.setdefault(previous_milestone, deepcopy(default_milestone_info))
             user_milestone['left'].add(ticket)
 
     return ticket_changes
@@ -96,3 +89,24 @@ class Command(BaseCommand):
 
 
 
+def _save_user_tickets(user, left_tickets, new_tickets):
+    if type(user) in (str, unicode):
+        user = User.objects.get(username=user)
+
+    for ticket_id in left_tickets:
+        models.UserCurrentMilestoneTicket.objects.filter(user=user, ticket=ticket_id).delete()
+        _create_notification(ticket_id, user, models.UserNotificationMilestoneChanges.ACTION_LEFT)
+
+    for ticket_id in new_tickets:
+        models.UserCurrentMilestoneTicket.objects.create(user=user, ticket=ticket_id)
+        _create_notification(ticket_id, user, models.UserNotificationMilestoneChanges.ACTION_ADD)
+
+def _create_notification(ticket_id, user, action):
+    ticket = models.Ticket.objects.get(id=ticket_id)
+    models.UserNotificationMilestoneChanges.objects.create(
+        milestone=ticket.milestone,
+        ticket=ticket.id,
+        user=user,
+        mail_dt=now(),
+        action=action
+    )

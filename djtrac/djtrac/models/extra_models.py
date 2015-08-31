@@ -46,7 +46,14 @@ class UserCurrentMilestoneTicket(models.Model):
     ticket = models.IntegerField(u"Номер тикета, по которому было выслано уведомление")
 
 
-class UserNotification(models.Model):
+class UserNotificationMilestoneChanges(models.Model):
+    ACTION_ADD = 'add'
+    ACTION_LEFT = 'left'
+    ACTION_CHOICES = (
+        (ACTION_ADD, ACTION_ADD),
+        (ACTION_LEFT, ACTION_LEFT),
+    )
+
     milestone = models.CharField(
         max_length=255, verbose_name=u"Название этапа, которому принадлежал тикет во время отправки.",
         choices=MILESTONE_CHOICES
@@ -54,13 +61,15 @@ class UserNotification(models.Model):
     ticket = models.IntegerField(u"Номер тикета по которому было оповещение")
     user = models.ForeignKey(User, related_name='notification_history')
     mail_dt = models.DateTimeField(u"Время, когда выслано оповещение (письмо)", auto_now_add=True)
+    action = models.CharField(max_length=4, choices=ACTION_CHOICES)
 
     def __unicode__(self):
-        return u"%s %s: %s" % (self.user, self.ticket, self.notificated_milestone)
+        return u"%s %s: %s" % (self.user, self.ticket, self.milestone)
 
     class Meta:
         verbose_name = u"Сообщение пользователю"
         verbose_name_plural = u"Сообщения пользователю"
+        get_latest_by = 'mail_dt'
 
 
 
