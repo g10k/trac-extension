@@ -133,6 +133,16 @@ class MilestoneRelease(models.Model):
     planned_date = models.DateField(verbose_name=u'Дата релиза', help_text=u'Планируемая дата релиза', null=True, blank=True)
     mail_dt = models.DateTimeField(verbose_name=u"Время рассылки уведомлений", null=True)
 
+class ProjectTestServer(models.Model):
+    project = models.ForeignKey(Project, verbose_name=u'Проект')
+    name = models.CharField(max_length=255, verbose_name=u"Название", unique=True)
+    address = models.IPAddressField(verbose_name=u'IP адрес')
+    url = models.URLField(verbose_name=u'http адрес')
 
+    def __unicode__(self):
+        return self.name
 
+    class Meta:
+        verbose_name = u"Тестовый сервер"
+        verbose_name_plural = u"Тестовые сервера"
 

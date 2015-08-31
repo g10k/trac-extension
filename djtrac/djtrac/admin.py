@@ -11,6 +11,7 @@ admin.site.register(models.ProjectMilestone)
 admin.site.register(models.NotificationHistory)
 admin.site.register(models.TargetUser)
 admin.site.register(models.TargetGroup)
+admin.site.register(models.ProjectTestServer)
 
 
 

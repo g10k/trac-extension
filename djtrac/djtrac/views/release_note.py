@@ -93,6 +93,9 @@ def send_mails(request):
 
 
 def _send_release_notes(milestone_release, notes):
+    project_qs = models.Project.objects.filter(allowed_milestones__milestone_name=milestone_release.milestone)
+    project_test_servers = models.ProjectTestServer.objects.filter(project__in=project_qs)
+
     users_notes = {}
     for note in notes:
         for user in note.get_target_users():
@@ -105,7 +108,7 @@ def _send_release_notes(milestone_release, notes):
 
         html_content = render_to_string(
             'djtrac/release_note/mail_template.html',
-            {'notes': user_notes, 'milestone_release': milestone_release}
+            {'notes': user_notes, 'milestone_release': milestone_release, 'project_test_servers': project_test_servers}
         )
 
         text_content = lxml.html.fromstring(html_content).text_content()
