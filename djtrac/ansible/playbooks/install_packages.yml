@@ -9,6 +9,6 @@
   with_items: [
     ntp, build-essential, supervisor, git,
     python-dev, python-setuptools, ipython,
-    nodejs
+    nodejs, libxml2-dev, libxslt1-dev
   ]
 

@@ -51,7 +51,7 @@
       sudo_user: trac_extra
 
     - name: Make migrations
-      shell: "{{ virtualenv_path }}/bin/python {{ repo_path }}/djtrac/manage.py migrate"
+      shell: "{{ virtualenv_path }}/bin/python {{ repo_path }}/djtrac/manage.py migrate --noinput"
       sudo_user: trac_extra
 
     - name: Install npm packages
