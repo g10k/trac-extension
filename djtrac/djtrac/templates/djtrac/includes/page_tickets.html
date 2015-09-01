@@ -33,7 +33,11 @@
         <tbody>
 
             {% for ticket in tickets %}
-                <tr>
+                <tr class="{% if ticket.type == 'тестирование' %}active
+                           {% elif ticket.type == 'разработка' %}success
+                           {% elif ticket.type == 'администрирование' %}info
+                           {% elif ticket.type == 'бага' %}danger
+                           {% endif %}">
                     <td>{{ forloop.counter }}</td>
                     <td id="{{ ticket.id }}">
                         {% include 'djtrac/includes/ticket_link.html' %}
