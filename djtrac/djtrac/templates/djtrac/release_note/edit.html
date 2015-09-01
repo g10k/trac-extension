@@ -5,9 +5,15 @@
     {{ block.super }}
     <script src="/npm/tinymce/tinymce.js"></script>
     <script type="text/javascript">
-        tinymce.init({
+        ed = tinymce.init({
             selector: "textarea",
             auto_focus: true,
+            setup: function (ed) {
+                ed.on('init', function(args) {
+                    // console.debug(args.target.id);
+                    ed.getBody().style.fontSize = '15px';
+                });
+            },
             plugins: [
                 "advlist autolink lists link image charmap print preview anchor",
                 "searchreplace visualblocks code fullscreen",
@@ -15,6 +21,7 @@
             ],
             toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
         });
+
     </script>
 {% endblock %}
 
