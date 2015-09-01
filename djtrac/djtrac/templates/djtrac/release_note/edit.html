@@ -1,4 +1,5 @@
 {% extends 'djtrac/base_form.html' %}
+{% load djtrac_tags %}
 
 {% block head %}
     {{ block.super }}
@@ -15,4 +16,21 @@
             toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
         });
     </script>
+{% endblock %}
+
+
+{% block body %}
+    <div class="row">
+        <div class="col-sm-11">
+            <h3>{{ ticket.summary|capfirst }}</h3>
+        </div>
+        <div class="col-sm-1">
+            {% if ticket.keywords %}
+                <span class="label label-info">{{ ticket.keywords }}</span>
+            {% endif %}
+        </div>
+    </div>
+    <br />
+
+    {{ block.super }}
 {% endblock %}

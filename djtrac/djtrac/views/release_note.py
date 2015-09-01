@@ -2,6 +2,7 @@
 from django.db.models.aggregates import Max
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 import lxml.html
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
@@ -37,6 +38,10 @@ def milestone(request):
 def edit(request, ticket_id):
     c = {}
 
+    ticket = models.Ticket.objects.get(id=ticket_id)
+    ticket_link = render_to_string('djtrac/includes/ticket_link.html', {'ticket': ticket})
+    c['title'] = mark_safe(u'Замечания по релизу %s' % ticket_link)
+
     qs = models.TicketReleaseNote.objects.filter(ticket=ticket_id)
     if qs:
         ticket_note = qs[0]
@@ -49,6 +54,7 @@ def edit(request, ticket_id):
         return redirect(request.GET.get('next', reverse('djtrac.views.main.main')))
 
     c['form'] = form
+    c['ticket'] = ticket
     return render(request, 'djtrac/release_note/edit.html', c)
 
 
