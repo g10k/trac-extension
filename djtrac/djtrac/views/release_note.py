@@ -108,7 +108,11 @@ def _send_release_notes(milestone_release, notes):
 
         html_content = render_to_string(
             'djtrac/mail/release_notes.html',
-            {'notes': user_notes, 'milestone_release': milestone_release, 'project_test_servers': project_test_servers}
+            {
+                'notes': user_notes,
+                'milestone_release': milestone_release,
+                'project_test_servers': project_test_servers,
+            }
         )
 
         text_content = lxml.html.fromstring(html_content).text_content()

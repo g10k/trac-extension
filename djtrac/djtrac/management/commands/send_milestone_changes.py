@@ -49,7 +49,10 @@ def process_changes():
 
         html_content = render_to_string(
             'djtrac/mail/ticket_changes.html',
-            {'milestones_tickets': milestones_tickets}
+            {
+                'milestones_tickets': milestones_tickets,
+                'project_url': settings.PROJECT_URL,
+            }
         )
 
         subject = u'Изменения по "%s"' % u'", "'.join(milestones_tickets.keys())

@@ -28,7 +28,11 @@
             </ul>
         {% endif %}
 
-        {# TODO: ссылка на отчет #}
+        <p>
+            <a href="{{ project_url }}{% url 'djtrac.views.main.main' %}">
+                Отчет по текущим задачам.
+            </a>
+        </p>
 
     {% endfor %}
 {% endblock %}
