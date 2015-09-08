@@ -1,15 +1,9 @@
 ---
-- name: Stop trac_extra
-  shell: "{{ virtualenv_path }}/bin/python {{ repo_path }}/djtrac/manage.py supervisor stop all"
-
-- name: Stop supervisord
-  shell: "{{ virtualenv_path }}/bin/python {{ repo_path }}/djtrac/manage.py supervisor shutdown"
+- name: Stop supervisord trac_extra
+  shell: /usr/bin/supervisorctl -c /etc/supervisor/supervisord.conf stop trac_extra
 
 - name: Wait 3 secods
   shell: sleep 3
 
-- name: Start supervisord
-  shell: "{{ virtualenv_path }}/bin/python {{ repo_path }}/djtrac/manage.py supervisor -d"
-
-- name: Start trac_extra
-  shell: "{{ virtualenv_path }}/bin/python {{ repo_path }}/djtrac/manage.py supervisor start all"
+- name: Start supervisord trac_extra
+  shell: /usr/bin/supervisorctl -c /etc/supervisor/supervisord.conf start trac_extra

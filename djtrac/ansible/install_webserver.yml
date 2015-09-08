@@ -70,6 +70,15 @@
       service: name=apache2 state=restarted
 
 
+    - name: Copy supervisor trac-extra conf
+      template: src=templates/supervisor.conf.tpl dest=/etc/supervisor/conf.d/trac_extra.conf
+
+    - name: reread supervisor config
+      shell: /usr/bin/supervisorctl -c /etc/supervisor/supervisord.conf reread && /usr/bin/supervisorctl update
+
+    - name: update supervisor config
+      shell: /usr/bin/supervisorctl -c /etc/supervisor/supervisord.conf update
+
     - include: playbooks/restart.yml
 
 
