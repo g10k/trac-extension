@@ -63,6 +63,21 @@
     - name: Create www directory for apache fastcgi
       file: path=/var/www/trac-extra owner=www-data state=directory
 
+    - name: Remove old static files
+      file: path=/var/www/trac-extra/static state=absent
+
+    - name: Copy static files
+      shell: cp -R {{ repo_path }}/djtrac/static /var/www/trac-extra/static
+
+    - name: Remove old npm files
+      file: path=/var/www/trac-extra/node_modules state=absent
+
+    - name: Copy npm files
+      shell: cp -R {{ repo_path }}/djtrac/node_modules /var/www/trac-extra/node_modules
+
+    - name: Change www directory owner
+      file: path=/var/www/trac-extra owner=www-data state=directory recurse=yes
+
     - name: Create apache cofig file
       template: src=templates/apache2.tpl dest=/etc/apache2/sites-available/trac-extra owner=root mode=0644
 

@@ -8,8 +8,8 @@ FastCGIExternalServer /var/www/trac-extra/trac-extra.fcgi -host 127.0.0.1:8885
     ErrorLog {{ log_path }}/www/error.log
     CustomLog {{ log_path }}/www/access.log common
 
-    Alias /static {{ repo_path }}/djtrac/static
-    Alias /npm {{ repo_path }}/djtrac/node_modules
+    Alias /static /var/www/trac-extra/static
+    Alias /npm /var/www/trac-extra/node_modules
 
     RewriteEngine On
     RewriteRule ^/(static.*)$ /$1 [QSA,L,PT]
