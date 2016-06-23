@@ -161,3 +161,9 @@ EMAIL_PORT = 587
 EMAIL_FILE_PATH = '/tmp/app-messages'
 
 PROJECT_URL = 'http://project.com'
+
+
+try:
+    from project.local_settings import *
+except ImportError:
+    print("Warning: no local_settings.py")
