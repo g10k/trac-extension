@@ -164,6 +164,6 @@ PROJECT_URL = 'http://project.com'
 
 
 try:
-    from project.local_settings import *
+    from djtrac.local_settings import *
 except ImportError:
     print("Warning: no local_settings.py")

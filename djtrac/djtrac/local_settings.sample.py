@@ -1,7 +1,7 @@
 import os
 
 
-SECRET_KEY = '123'
+SECRET_KEY = '12312312312312321'
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATABASES = {

@@ -1,9 +1,9 @@
-# docker build -t registry.service.mm.consul:5000/till .
+# docker build -t registry.service.mm.consul:5000/trac-extension .
 
-FROM g10k/filebeat
+FROM ubuntu:14.04
 MAINTAINER telminov <telminov@soft-way.biz>
 
-EXPOSE 8080
+EXPOSE 8885
 
 VOLUME /data/
 VOLUME /conf/
@@ -17,7 +17,13 @@ RUN apt-get update && \
                     vim \
                     supervisor \
                     curl \
-                    build-essential
+                    build-essential \
+                    python-pip \
+                   # для установки через pip lxml==3.4.4 http://stackoverflow.com/questions/5178416/pip-install-lxml-error
+                    python-dev \
+                    libxml2-dev \
+                    libxslt1-dev \
+                    zlib1g-dev
 
 RUN curl -sL https://deb.nodesource.com/setup | sudo bash -
 RUN apt-get install -y nodejs
@@ -26,21 +32,20 @@ RUN mkdir /var/log/trac_extra
 
 # copy source
 COPY . /opt/trac_extra
-WORKDIR /opt/trac_extra
+WORKDIR /opt/trac_extra/djtrac
 
-RUN pip3 install -r requirements.txt
-RUN cp project/local_settings.sample.py project/local_settings.py
+RUN pip install -r requirements.txt
+RUN cp djtrac/local_settings.sample.py djtrac/local_settings.py; \
+    cp supervisord.conf /etc/supervisor/conf.d/trac_extra.conf
 
-COPY supervisord.conf /etc/supervisor/conf.d/trac_extra.conf
-
-CMD test "$(ls /conf/local_settings.py)" || cp project/local_settings.sample.py /conf/local_settings.py; \
-    test "$(ls /conf/filebeat.yml)" || cp /etc/filebeat/filebeat.yml /conf/filebeat.yml; \
-    rm project/local_settings.py;  ln -s /conf/local_settings.py project/local_settings.py; \
-    rm /etc/filebeat/filebeat.yml; ln -s /conf/filebeat.yml /etc/filebeat/filebeat.yml; \
+CMD test "$(ls /conf/local_settings.py)" || cp djtrac/local_settings.sample.py /conf/local_settings.py; \
+#    test "$(ls /conf/filebeat.yml)" || cp /etc/filebeat/filebeat.yml /conf/filebeat.yml; \
+    rm djtrac/local_settings.py;  ln -s /conf/local_settings.py djtrac/local_settings.py; \
+#    rm /etc/filebeat/filebeat.yml; ln -s /conf/filebeat.yml /etc/filebeat/filebeat.yml; \
     rm -rf static; ln -s /static static; \
     rm -rf node_modules; ln -s /node_modules node_modules; \
-    service filebeat start; \
+#    service filebeat start; \
     npm install; \
-    python3 ./manage.py migrate; \
-    python3 ./manage.py collectstatic --noinput; \
+    python ./manage.py migrate; \
+    python ./manage.py collectstatic --noinput; \
     /usr/bin/supervisord -c /etc/supervisor/supervisord.conf --nodaemon
