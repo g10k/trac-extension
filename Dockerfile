@@ -3,7 +3,7 @@
 FROM ubuntu:14.04
 MAINTAINER telminov <telminov@soft-way.biz>
 
-EXPOSE 8885
+EXPOSE 8080
 
 VOLUME /data/
 VOLUME /conf/
