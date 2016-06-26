@@ -39,12 +39,9 @@ RUN cp djtrac/local_settings.sample.py djtrac/local_settings.py; \
     cp supervisord.conf /etc/supervisor/conf.d/trac_extra.conf
 
 CMD test "$(ls /conf/local_settings.py)" || cp djtrac/local_settings.sample.py /conf/local_settings.py; \
-#    test "$(ls /conf/filebeat.yml)" || cp /etc/filebeat/filebeat.yml /conf/filebeat.yml; \
     rm djtrac/local_settings.py;  ln -s /conf/local_settings.py djtrac/local_settings.py; \
-#    rm /etc/filebeat/filebeat.yml; ln -s /conf/filebeat.yml /etc/filebeat/filebeat.yml; \
     rm -rf static; ln -s /static static; \
     rm -rf node_modules; ln -s /node_modules node_modules; \
-#    service filebeat start; \
     npm install; \
     python ./manage.py migrate; \
     python ./manage.py collectstatic --noinput; \

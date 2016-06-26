@@ -1,0 +1,31 @@
+server {
+    listen 9081;
+    server_name {{ web_server_name }};
+
+    access_log  /var/log/www/djtrac/access.log;
+    error_log   /var/log/www/djtrac/error.log;
+
+    location / {
+        include fastcgi_params;
+        fastcgi_pass  localhost:8091;
+        fastcgi_param QUERY_STRING    $query_string;
+        fastcgi_param PATH_INFO $fastcgi_script_name;
+        fastcgi_param REQUEST_METHOD $request_method;
+        fastcgi_param QUERY_STRING $query_string;
+        fastcgi_param CONTENT_TYPE $content_type;
+        fastcgi_param CONTENT_LENGTH $content_length;
+        fastcgi_pass_header Authorization;
+        fastcgi_intercept_errors off;
+        fastcgi_param SCRIPT_NAME "";
+        client_max_body_size  10m;
+    }
+
+    location /static {
+        alias {{ static_path }};
+    }
+
+    location /npm {
+        alias {{ npm_path }};
+    }
+
+}

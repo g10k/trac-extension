@@ -1,0 +1,63 @@
+---
+- name: Stop container
+  docker:
+      image: "{{ image_name }}"
+      name: "{{ container_name }}"
+      state: absent
+
+- name: Create directories
+  file: path={{ item }} state=directory mode=0700
+  with_items:
+    - "{{ data_path }}"
+    - "{{ log_path }}/supervisor"
+    - "{{ log_path }}/djtrac"
+    - "{{ conf_path }}"
+
+- name: Create web static path
+  file: path={{ static_path }} state=directory owner=www-data
+
+- name: Create web npm path
+  file: path={{ npm_path }} state=directory owner=www-data
+
+- name: Check existsing settings file
+  stat: path={{ conf_path }}/local_settings.py
+  register: local_settings
+
+- name: Create settings
+  template: src=local_settings.py.jinja2 dest={{ conf_path }}/local_settings.py mode=0600
+  when: not local_settings.stat.exists
+
+- name: Start container
+  docker:
+      image: "{{ image_name }}"
+      ports: "{{ container_ports }}"
+      name: "{{ container_name }}"
+      hostname: "{{ container_name }}_{{ ansible_hostname }}"
+      volumes: "{{ data_path }}:/data,{{ conf_path }}:/conf,{{ log_path }}:/var/log,{{ static_path }}:/static,{{ npm_path }}:/node_modules"
+      restart_policy: "{{ restart_policy }}"
+      state: running
+      pull: always
+
+- name: Wait for start
+  shell: sleep 2
+
+- name: Load permissions
+  shell: docker exec -ti {{ container_name }} bash -c "python ./manage.py loaddata core/fixtures/permissions.json"
+
+- name: Create webserver log directory
+  file: path=/var/log/www/djtrac/ state=directory owner=www-data
+
+- name: Create nginx config
+  template: src=nginx.jinja2 dest=/etc/nginx/sites-enabled/trac-extra
+
+- name: Restart nginx
+  service: name=nginx state=restarted
+
+- name: Set owner for static (parent)
+  file: path={{ static_path }}/.. state=directory mode=0755
+
+- name: Set owner for static
+  file: path={{ static_path }} state=directory owner=www-data recurse=yes
+
+- name: Set owner for npm
+  file: path={{ npm_path }} state=directory owner=www-data recurse=yes
