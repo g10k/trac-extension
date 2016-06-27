@@ -1,0 +1,17 @@
+DEBUG = False
+SECRET_KEY = '{{ lookup('password', '/tmp/passwordfile chars=ascii_letters,digits,hexdigits,punctuation') }}'
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '/data/extra.db',
+    },
+    'trac_db': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '/data/trac.db',
+    },
+}
+
+ALLOWED_HOSTS = ['{{ web_server_name }}']
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

@@ -41,11 +41,8 @@
 - name: Wait for start
   shell: sleep 2
 
-- name: Load permissions
-  shell: docker exec -ti {{ container_name }} bash -c "python ./manage.py loaddata core/fixtures/permissions.json"
-
 - name: Create webserver log directory
-  file: path=/var/log/www/djtrac/ state=directory owner=www-data
+  file: path=/var/log/www/trac-extra/ state=directory owner=www-data
 
 - name: Create nginx config
   template: src=nginx.jinja2 dest=/etc/nginx/sites-enabled/trac-extra

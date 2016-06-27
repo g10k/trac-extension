@@ -1,9 +1,0 @@
----
-- name: Stop supervisord trac_extra
-  shell: /usr/bin/supervisorctl -c /etc/supervisor/supervisord.conf stop trac_extra
-
-- name: Wait 3 secods
-  shell: sleep 3
-
-- name: Start supervisord trac_extra
-  shell: /usr/bin/supervisorctl -c /etc/supervisor/supervisord.conf start trac_extra

@@ -1,99 +1,17 @@
 # ansible-playbook -i prod install_webserver.yml --ask-sudo-pass -v
 ---
-- hosts: webserver
-  sudo: yes
-#  remote_user: root
+- name: Installation of trac-extra
+  hosts: all
+  become: yes
+  become_method: sudo
 
-  vars:
-    virtualenv_path: /home/trac_extra/virt_env
-    virtualenv_python: /home/trac_extra/virt_env/bin/python
-    virtualenv_user: trac_extra
-    repo_path: /home/trac_extra/repo
-    requirements_path: "{{ repo_path }}/djtrac/requirements.txt"
-    log_path: /var/log/trac_extra
-#    track_db_path: /vagrant/trac.db  -> see inventory file
-
-  tasks:
-    - include: playbooks/install_packages.yml
-
-    - name: Create trac_extra user
-      user: name=trac_extra state=present
-
-    - name: Create ssh directory
-      file: path=/home/trac_extra/.ssh state=directory owner=trac_extra mode=0755
-      sudo_user: trac_extra
-
-    - name: Get trac-extension repo
-      git: repo=https://github.com/g10k/trac-extension.git dest={{ repo_path }}
-
-    - name: Change permissions
-      file: path={{ repo_path }} owner=trac_extra group=trac_extra state=directory recurse=yes
-
-    - include: playbooks/intall_virtualenv.yml
-
-
-    - name: settings.py file stat
-      stat: path={{ repo_path }}/djtrac/djtrac/settings.py
-      register: st
-
-    - name: Copy settings.py if not exists
-      template: src=templates/settings.py.tpl dest={{ repo_path }}/djtrac/djtrac/settings.py owner=trac_extra mode=0600
-      when: not st.stat.exists
-
-    - name: Create symlink for trac.db
-      file: src={{ track_db_path }} dest={{ repo_path }}/djtrac/djtrac/trac.db state=link
-
-    - name: Create static directory
-      file: path={{ repo_path }}/djtrac/static owner=trac_extra state=directory mode=0755 recurse=yes
-
-    - name: Collect static
-      shell: "{{ virtualenv_path }}/bin/python {{ repo_path }}/djtrac/manage.py collectstatic --noinput"
-      sudo_user: trac_extra
-
-    - name: Make migrations
-      shell: "{{ virtualenv_path }}/bin/python {{ repo_path }}/djtrac/manage.py migrate --noinput"
-      sudo_user: trac_extra
-
-    - name: Install npm packages
-      npm: path={{ repo_path }}/djtrac
-
-    - name: Create www log directory
-      file: path={{ log_path }}/www owner=www-data state=directory
-
-    - name: Create www directory for apache fastcgi
-      file: path=/var/www/trac-extra owner=www-data state=directory
-
-    - name: Remove old static files
-      file: path=/var/www/trac-extra/static state=absent
-
-    - name: Copy static files
-      shell: cp -R {{ repo_path }}/djtrac/static /var/www/trac-extra/static
-
-    - name: Remove old npm files
-      file: path=/var/www/trac-extra/node_modules state=absent
-
-    - name: Copy npm files
-      shell: cp -R {{ repo_path }}/djtrac/node_modules /var/www/trac-extra/node_modules
-
-    - name: Change www directory owner
-      file: path=/var/www/trac-extra owner=www-data state=directory recurse=yes
-
-    - name: Create apache cofig file
-      template: src=templates/apache2.tpl dest=/etc/apache2/sites-available/trac-extra owner=root mode=0644
-
-    - name: Restart apache2
-      service: name=apache2 state=restarted
-
-
-    - name: Copy supervisor trac-extra conf
-      template: src=templates/supervisor.conf.tpl dest=/etc/supervisor/conf.d/trac_extra.conf
-
-    - name: reread supervisor config
-      shell: /usr/bin/supervisorctl -c /etc/supervisor/supervisord.conf reread && /usr/bin/supervisorctl update
-
-    - name: update supervisor config
-      shell: /usr/bin/supervisorctl -c /etc/supervisor/supervisord.conf update
-
-    - include: playbooks/restart.yml
-
-
+  roles:
+    - role: webserver
+      container_name: trac-extension
+      image_name: g10k/trac-extension
+      container_ports: 127.0.0.1:8083:8080
+      conf_path: "/var/docker/{{ container_name }}/conf"
+      data_path: "/var/docker/{{ container_name }}/data"
+      log_path: "/var/docker/{{ container_name }}/log"
+      static_path: "/var/www/{{ container_name }}/static"
+      npm_path: "/var/www/{{ container_name }}/npm"
