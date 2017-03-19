@@ -32,7 +32,7 @@
       image: "{{ image_name }}"
       ports: "{{ container_ports }}"
       name: "{{ container_name }}"
-      hostname: "{{ container_name }}_{{ ansible_hostname }}"
+      #hostname: "{{ container_name }}_{{ ansible_hostname }}"
       volumes: "{{ data_path }}:/data,{{ conf_path }}:/conf,{{ log_path }}:/var/log,{{ static_path }}:/static,{{ npm_path }}:/node_modules"
       restart_policy: "{{ restart_policy }}"
       state: running

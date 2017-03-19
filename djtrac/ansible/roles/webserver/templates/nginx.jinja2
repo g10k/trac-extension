@@ -1,5 +1,5 @@
 server {
-    listen 80;
+    listen {{ web_server_name }}:80;
     server_name {{ web_server_name }};
 
     access_log  /var/log/www/trac-extra/access.log;
